@@ -1,0 +1,23 @@
+node_modules/
+.env
+.next/
+dist/
+coverage/
+
+# Environment and secrets
+.env.*
+!.env.example
+cookies.txt
+**/cookies.txt
+
+# Build outputs and dependencies
+**/node_modules/
+**/.next/
+**/coverage/
+dist/
+
+# Local logs
+npm-debug.log*
+
+# Old frontend scaffold
+frontend-temp/
