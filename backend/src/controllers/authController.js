@@ -3,10 +3,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 function cookieOptions() {
+  const isProduction = process.env.NODE_ENV === "production";
+
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 8 * 60 * 60 * 1000,
     path: "/",
   };
@@ -59,10 +61,12 @@ async function login(req, res, next) {
 }
 
 function logout(req, res) {
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     path: "/",
   });
 
