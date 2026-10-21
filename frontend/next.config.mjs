@@ -1,8 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://doctor-tracker-2scb.onrender.com/api/:path*",
+      },
+    ];
+  },
+
   turbopack: {
     root: process.cwd(),
     rules: {
