@@ -20,4 +20,4 @@ dist/
 npm-debug.log*
 
 # Old frontend scaffold
-frontend-temp/
+frontend-temp/create-doctor-tracker.bat
