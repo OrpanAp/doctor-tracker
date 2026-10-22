@@ -228,7 +228,7 @@ export default function DoctorsPage() {
               className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
-          <div className="grid gap-3 border-b border-slate-200 p-4 sm:grid-cols-2 min-[1171px]:grid-cols-5">
+          <div className="grid gap-3 border-b border-slate-200 p-4 min-[1171px]:grid-cols-5">
             <label className="text-xs font-semibold text-slate-600">Status
               <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
                 <option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option>
