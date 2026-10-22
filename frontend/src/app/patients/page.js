@@ -39,7 +39,7 @@ export default function PatientsPage() {
       return;
     }
     setError(err.message || "Something went wrong. Please try again.");
-  }, [handleRequestError]);
+  }, [router]);
 
   const loadPatients = useCallback(async () => {
     setLoading(true);
@@ -90,9 +90,9 @@ export default function PatientsPage() {
       const payload = result.data ?? result;
       setDoctors(Array.isArray(payload) ? payload : payload.doctors ?? []);
     } catch (err) {
-      setError(err.message);
+      handleRequestError(err);
     }
-  }, [router]);
+  }, [handleRequestError]);
 
   useEffect(() => {
     const timer = setTimeout(loadPatients, 250);
