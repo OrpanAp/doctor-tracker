@@ -273,7 +273,7 @@ export default function DoctorsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  {["Doctor", "Specialty", "Department", "Hospital", "Experience", "Status", "Actions"].map((heading) => (
+                  {["Doctor", "Specialty", "Department", "Hospital", "Experience", "Status", "Patients", "Actions"].map((heading) => (
                     <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">{heading}</th>
                   ))}
                 </tr>
@@ -295,13 +295,16 @@ export default function DoctorsPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4">
+                      <Link href={`/patients?doctor=${doctor._id}`} className="font-medium text-blue-600 hover:underline">View patients</Link>
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4">
                       <button onClick={() => startEdit(doctor)} className="mr-3 font-medium text-blue-600 hover:underline">Edit</button>
                       <button onClick={() => deleteDoctor(doctor)} className="font-medium text-red-600 hover:underline">Delete</button>
                     </td>
                   </tr>
                 ))}
                 {!loading && doctors.length === 0 && (
-                  <tr><td colSpan="7" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
+                  <tr><td colSpan="8" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
                 )}
               </tbody>
             </table>
