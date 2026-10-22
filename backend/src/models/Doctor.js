@@ -28,6 +28,7 @@ const doctorSchema = new mongoose.Schema(
 
 doctorSchema.index({ name: 1, specialty: 1 });
 doctorSchema.index({ hospital: 1 });
+doctorSchema.index({ createdAt: -1 });
 doctorSchema.index({ status: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Doctor", doctorSchema);
