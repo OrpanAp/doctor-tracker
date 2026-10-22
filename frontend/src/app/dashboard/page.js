@@ -45,10 +45,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 md:flex">
-      <aside className="bg-slate-950 p-6 text-white md:min-h-screen md:w-64">
+    <div className="min-h-screen bg-slate-50 min-[1171px]:flex">
+      <aside className="bg-slate-950 p-6 text-white min-[1171px]:min-h-screen min-[1171px]:w-64">
         <h1 className="mb-8 text-xl font-bold">✚ Doctor Tracker</h1>
-        <nav className="flex gap-2 overflow-x-auto md:flex-col">
+        <nav className="flex flex-wrap gap-2 min-[1171px]:flex-col">
           <Link className="rounded-lg bg-blue-600 px-4 py-3" href="/dashboard">▦ Dashboard</Link>
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/doctors">⚕ Doctors</Link>
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/patients">♙ Patients</Link>
@@ -58,7 +58,7 @@ export default function DashboardPage() {
         </button>
       </aside>
 
-      <main className="min-w-0 flex-1 p-5 md:p-9">
+      <main className="min-w-0 flex-1 p-5 min-[1171px]:p-9">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm text-slate-500">Overview</p>
@@ -76,7 +76,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-5 min-[1171px]:grid-cols-4">
           {stats.map((stat) => (
             <article key={stat.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ export default function DashboardPage() {
           ))}
         </section>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-2">
+        <section className="mt-8 grid gap-6 min-[1171px]:grid-cols-2">
           <article className="rounded-2xl border border-slate-200 bg-white p-6">
             <div className="mb-5 flex items-center justify-between">
               <h3 className="text-lg font-bold text-slate-900">Patients by condition</h3>
