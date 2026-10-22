@@ -255,6 +255,7 @@ export default function DoctorsPage() {
                   <div className="min-w-0">
                     <h2 className="break-words font-semibold text-slate-900">{doctor.name}</h2>
                     <p className="mt-1 break-all text-sm text-slate-500">{doctor.email}</p>
+                    <p className="mt-1 break-all text-xs text-slate-500">{doctor.phone || "No phone listed"}</p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
                     {doctor.status || "inactive"}
@@ -262,6 +263,7 @@ export default function DoctorsPage() {
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Specialty</dt><dd className="mt-1 break-words text-slate-800">{doctor.specialty || "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Phone</dt><dd className="mt-1 break-all text-slate-800">{doctor.phone || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Hospital</dt><dd className="mt-1 break-words text-slate-800">{doctor.hospital || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Department</dt><dd className="mt-1 break-words text-slate-800">{doctor.department || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Experience</dt><dd className="mt-1 text-slate-800">{doctor.experienceYears ?? 0} years</dd></div>
