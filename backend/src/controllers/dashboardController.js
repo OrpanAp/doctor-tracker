@@ -10,6 +10,8 @@ async function getDashboard(req, res, next) {
       recentPatients,
       patientsByCondition,
       patientsByDoctor,
+      patientsCreatedLast30Days,
+      monthlyPatientRegistrations,
     ] = await Promise.all([
       Doctor.countDocuments(),
       Doctor.countDocuments({ status: "active" }),
@@ -29,6 +31,25 @@ async function getDashboard(req, res, next) {
         { $sort: { count: -1 } },
         { $limit: 5 },
       ]),
+      Patient.countDocuments({
+        createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+      }),
+      Patient.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: new Date(new Date().getFullYear(), new Date().getMonth() - 5, 1),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]),
     ]);
 
     const doctorIds = patientsByDoctor.map((item) => item._id);
@@ -46,6 +67,11 @@ async function getDashboard(req, res, next) {
         activeDoctors,
         inactiveDoctors: totalDoctors - activeDoctors,
         totalPatients,
+        patientsCreatedLast30Days,
+        monthlyPatientRegistrations: monthlyPatientRegistrations.map((item) => ({
+          month: item._id,
+          count: item.count,
+        })),
         recentPatients,
         patientsByCondition: patientsByCondition.map((item) => ({
           condition: item._id,

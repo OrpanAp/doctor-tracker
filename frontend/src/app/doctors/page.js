@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
@@ -10,15 +11,23 @@ const emptyForm = {
   email: "",
   phone: "",
   department: "",
+  hospital: "",
   experienceYears: 0,
   status: "active",
 };
 
 export default function DoctorsPage() {
+  const router = useRouter();
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [specialtyFilter, setSpecialtyFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [pages, setPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -26,14 +35,30 @@ export default function DoctorsPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
+  const handleRequestError = useCallback((err) => {
+    if (/unauthori[sz]ed|not authorized|authentication|token|login|session/i.test(err.message || "")) {
+      router.replace("/login");
+      return;
+    }
+    setError(err.message || "Something went wrong. Please try again.");
+  }, [router]);
+
   const loadDoctors = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const result = await api(
-        `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}`
-      );
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        search,
+      });
+      if (statusFilter) params.set("status", statusFilter);
+      if (specialtyFilter.trim()) params.set("specialty", specialtyFilter.trim());
+      if (dateFrom) params.set("dateFrom", dateFrom);
+      if (dateTo) params.set("dateTo", dateTo);
+
+      const result = await api(`/doctors?${params.toString()}`);
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
         ? result.data
@@ -50,15 +75,16 @@ export default function DoctorsPage() {
 
       setDoctors(records);
       setPages(Math.max(1, totalPages));
+      setTotalRecords(result.pagination?.total ?? result.data?.pagination?.total ?? records.length);
       if (page > Math.max(1, totalPages)) {
         setPage(Math.max(1, totalPages));
       }
     } catch (err) {
-      setError(err.message);
+      handleRequestError(err);
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, limit, search, statusFilter, specialtyFilter, dateFrom, dateTo, handleRequestError]);
 
   useEffect(() => {
     const timer = setTimeout(loadDoctors, 250);
@@ -81,6 +107,7 @@ export default function DoctorsPage() {
       email: doctor.email ?? "",
       phone: doctor.phone ?? "",
       department: doctor.department ?? "",
+      hospital: doctor.hospital ?? "",
       experienceYears: doctor.experienceYears ?? 0,
       status: doctor.status ?? "active",
     });
@@ -112,7 +139,7 @@ export default function DoctorsPage() {
       setNotice(result.message || "Doctor saved successfully.");
       await loadDoctors();
     } catch (err) {
-      setError(err.message);
+      handleRequestError(err);
     }
   }
 
@@ -171,13 +198,14 @@ export default function DoctorsPage() {
                 ["email", "Email", "email"],
                 ["phone", "Phone", "tel"],
                 ["department", "Department", "text"],
+                ["hospital", "Hospital / Clinic", "text"],
                 ["experienceYears", "Years of experience", "number"],
               ].map(([key, label, type]) => (
                 <label key={key} className="text-sm font-medium text-slate-700">
                   {label}
                   <input
                     type={type}
-                    required={key !== "phone" && key !== "department"}
+                    required={key !== "department" && key !== "hospital"}
                     min={type === "number" ? "0" : undefined}
                     value={form[key]}
                     onChange={(e) => setForm({ ...form, [key]: e.target.value })}
@@ -210,22 +238,55 @@ export default function DoctorsPage() {
 
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 p-4">
-            <input
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Search name, specialty, or email..."
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 sm:max-w-md"
-            />
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+              <input
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                placeholder="Search name, specialty, email, hospital..."
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+                className="w-full rounded-lg border border-slate-300 px-3 py-3"
+                aria-label="Filter doctors by status"
+              >
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <input
+                value={specialtyFilter}
+                onChange={(e) => { setSpecialtyFilter(e.target.value); setPage(1); }}
+                placeholder="Exact specialty filter"
+                aria-label="Filter doctors by specialty"
+                className="w-full rounded-lg border border-slate-300 px-3 py-3"
+              />
+              <label className="text-xs text-slate-500">
+                Created from
+                <input type="date" value={dateFrom} max={dateTo || undefined}
+                  onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" />
+              </label>
+              <label className="text-xs text-slate-500">
+                Created to
+                <input type="date" value={dateTo} min={dateFrom || undefined}
+                  onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" />
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSearch(""); setStatusFilter(""); setSpecialtyFilter(""); setDateFrom(""); setDateTo(""); setPage(1); }}
+              className="mt-3 text-sm font-medium text-blue-700 hover:underline"
+            >Clear filters</button>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  {["Doctor", "Specialty", "Department", "Experience", "Status", "Actions"].map((heading) => (
+                  {["Doctor", "Specialty", "Department", "Hospital", "Experience", "Status", "Patients", "Actions"].map((heading) => (
                     <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">{heading}</th>
                   ))}
                 </tr>
@@ -239,11 +300,15 @@ export default function DoctorsPage() {
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.specialty}</td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.department || "—"}</td>
+                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.hospital || "—"}</td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.experienceYears ?? 0} years</td>
                     <td className="whitespace-nowrap px-5 py-4">
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
                         {doctor.status}
                       </span>
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4">
+                      <Link href={`/patients?doctor=${doctor._id}`} className="font-medium text-blue-600 hover:underline">View patients</Link>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4">
                       <button onClick={() => startEdit(doctor)} className="mr-3 font-medium text-blue-600 hover:underline">Edit</button>
@@ -252,17 +317,29 @@ export default function DoctorsPage() {
                   </tr>
                 ))}
                 {!loading && doctors.length === 0 && (
-                  <tr><td colSpan="6" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
+                  <tr><td colSpan="8" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
                 )}
               </tbody>
             </table>
           </div>
 
-          <div className="flex items-center justify-between border-t border-slate-200 p-4">
-            <span className="text-sm text-slate-500">Page {page} of {pages}</span>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 p-4">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+              <span>{totalRecords === 0 ? "Showing 0 records" : `Showing ${(page - 1) * limit + 1}–${Math.min(page * limit, totalRecords)} of ${totalRecords}`}</span>
+              <label className="flex items-center gap-2">
+                Rows per page
+                <select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+                  className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-slate-700">
+                  <option value={10}>10</option><option value={25}>25</option><option value={50}>50</option>
+                </select>
+              </label>
+              <span>Page {page} of {pages}</span>
+            </div>
             <div className="flex gap-2">
-              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40">Previous</button>
-              <button disabled={page >= pages} onClick={() => setPage((p) => p + 1)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40">Next</button>
+              <button disabled={page <= 1 || loading} onClick={() => setPage(1)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40">First</button>
+              <button disabled={page <= 1 || loading} onClick={() => setPage((p) => p - 1)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40">Previous</button>
+              <button disabled={page >= pages || loading} onClick={() => setPage((p) => p + 1)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40">Next</button>
+              <button disabled={page >= pages || loading} onClick={() => setPage(pages)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40">Last</button>
             </div>
           </div>
         </section>

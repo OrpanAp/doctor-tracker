@@ -38,6 +38,7 @@ export default function DashboardPage() {
     { label: "Active Doctors", value: data?.activeDoctors ?? 0, icon: "✓", color: "green" },
     { label: "Inactive Doctors", value: data?.inactiveDoctors ?? 0, icon: "◷", color: "amber" },
     { label: "Total Patients", value: data?.totalPatients ?? 0, icon: "♙", color: "purple" },
+    { label: "New Patients (30 Days)", value: data?.patientsCreatedLast30Days ?? 0, icon: "↗", color: "blue" },
   ];
 
   if (loading) {
@@ -76,7 +77,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
           {stats.map((stat) => (
             <article key={stat.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -132,6 +133,31 @@ export default function DashboardPage() {
               </div>
             )}
           </article>
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 className="mb-5 text-lg font-bold text-slate-900">Monthly patient registrations</h3>
+          {(data?.monthlyPatientRegistrations || []).length === 0 ? (
+            <p className="py-8 text-sm text-slate-500">No monthly registration data available yet.</p>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {data.monthlyPatientRegistrations.map((item) => {
+                const max = Math.max(...data.monthlyPatientRegistrations.map((entry) => entry.count), 1);
+                const monthLabel = new Date(`${item.month}-01T00:00:00`).toLocaleDateString(undefined, { month: "short", year: "numeric" });
+                return (
+                  <div key={item.month} className="rounded-xl bg-slate-50 p-4">
+                    <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+                      <span className="text-slate-600">{monthLabel}</span>
+                      <span className="font-semibold text-slate-900">{item.count}</span>
+                    </div>
+                    <div className="h-3 rounded-full bg-slate-200">
+                      <div className="h-3 rounded-full bg-blue-600" style={{ width: `${(item.count / max) * 100}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">

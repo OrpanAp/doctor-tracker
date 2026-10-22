@@ -36,6 +36,20 @@ async function getPatients(req, res, next) {
       ];
     }
 
+    // Filter by the date the patient record was created.
+    if (req.query.dateFrom || req.query.dateTo) {
+      filter.createdAt = {};
+      if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) {
+        filter.createdAt.$gte = new Date(req.query.dateFrom);
+      }
+      if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) {
+        const dateTo = new Date(req.query.dateTo);
+        dateTo.setHours(23, 59, 59, 999);
+        filter.createdAt.$lte = dateTo;
+      }
+      if (Object.keys(filter.createdAt).length === 0) delete filter.createdAt;
+    }
+
     const [patients, total] = await Promise.all([
       Patient.find(filter)
         .populate("doctor", "name specialty")

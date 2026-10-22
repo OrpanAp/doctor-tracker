@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
@@ -37,13 +38,6 @@ app.use("/api/patients", patientRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 // Central error handler — keep this last
-app.use((err, req, res, next) => {
-  console.error(err.message);
-
-  res.status(500).json({
-    success: false,
-    message: "Internal server error",
-  });
-});
+app.use(errorHandler);
 
 module.exports = app;
