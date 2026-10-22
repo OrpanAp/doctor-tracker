@@ -345,6 +345,10 @@ export default function PatientsPage() {
 
           <div className="hidden min-[1171px]:block">
             <table className="w-full table-fixed text-left text-xs min-[1400px]:text-sm">
+              <colgroup>
+                <col className="w-[20%]" /><col className="w-[8%]" /><col className="w-[18%]" />
+                <col className="w-[14%]" /><col className="w-[22%]" /><col className="w-[18%]" />
+              </colgroup>
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
                   {["Patient", "Age", "Condition", "Phone", "Assigned doctor", "Actions"].map((heading) => (
