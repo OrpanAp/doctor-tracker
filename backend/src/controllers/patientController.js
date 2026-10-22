@@ -25,7 +25,12 @@ async function getPatients(req, res, next) {
       };
     }
 
-    const dateFilter = {};\n    if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) dateFilter.$gte = new Date(req.query.dateFrom);\n    if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) { const end = new Date(req.query.dateTo); end.setHours(23, 59, 59, 999); dateFilter.$lte = end; }\n    if (Object.keys(dateFilter).length) filter.createdAt = dateFilter;\n\n    if (req.query.search) {
+    const dateFilter = {};
+    if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) dateFilter.$gte = new Date(req.query.dateFrom);
+    if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) { const end = new Date(req.query.dateTo); end.setHours(23, 59, 59, 999); dateFilter.$lte = end; }
+    if (Object.keys(dateFilter).length) filter.createdAt = dateFilter;
+
+    if (req.query.search) {
       const search = String(req.query.search)
         .trim()
         .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
