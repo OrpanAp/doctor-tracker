@@ -139,7 +139,7 @@ export default function DoctorsPage() {
         <Link href="/dashboard" className="mb-8 block text-xl font-bold">
           ✚ Doctor Tracker
         </Link>
-        <nav className="flex gap-2 overflow-x-auto md:flex-col">
+        <nav className="flex flex-wrap gap-2 md:flex-col">
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/dashboard">▦ Dashboard</Link>
           <Link className="rounded-lg bg-blue-600 px-4 py-3" href="/doctors">⚕ Doctors</Link>
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/patients">♙ Patients</Link>
