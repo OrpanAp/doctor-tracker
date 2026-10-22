@@ -228,6 +228,25 @@ export default function DoctorsPage() {
               className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
+          <div className="grid gap-3 border-b border-slate-200 p-4 sm:grid-cols-2 min-[1171px]:grid-cols-5">
+            <label className="text-xs font-semibold text-slate-600">Status
+              <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
+                <option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option>
+              </select>
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Specialty
+              <input value={specialtyFilter} onChange={(e) => { setSpecialtyFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" placeholder="Any specialty" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Hospital
+              <input value={hospitalFilter} onChange={(e) => { setHospitalFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" placeholder="Any hospital" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Created from
+              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Created to
+              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+          </div>
 
           <div className="grid gap-3 p-3 min-[1171px]:grid-cols-2 min-[1171px]:hidden">
             {doctors.map((doctor) => (
@@ -243,6 +262,7 @@ export default function DoctorsPage() {
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Specialty</dt><dd className="mt-1 break-words text-slate-800">{doctor.specialty || "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Hospital</dt><dd className="mt-1 break-words text-slate-800">{doctor.hospital || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Department</dt><dd className="mt-1 break-words text-slate-800">{doctor.department || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Experience</dt><dd className="mt-1 text-slate-800">{doctor.experienceYears ?? 0} years</dd></div>
                 </dl>
