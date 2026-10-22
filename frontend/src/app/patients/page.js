@@ -300,6 +300,23 @@ export default function PatientsPage() {
               className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
+          <div className="grid gap-3 border-b border-slate-200 p-4 min-[1171px]:grid-cols-4">
+            <label className="text-xs font-semibold text-slate-600">Condition
+              <input value={conditionFilter} onChange={(e) => { setConditionFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" placeholder="Any condition" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Assigned doctor
+              <select value={doctorFilter} onChange={(e) => { setDoctorFilter(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
+                <option value="">All doctors</option>
+                {doctors.map((doctor) => <option key={doctor._id} value={doctor._id}>{doctor.name}</option>)}
+              </select>
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Registered from
+              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Registered to
+              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+          </div>
 
           <div className="grid gap-3 p-3 min-[1171px]:grid-cols-2 min-[1171px]:hidden">
             {patients.map((patient) => (
