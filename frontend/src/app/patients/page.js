@@ -33,9 +33,25 @@ export default function PatientsPage() {
       const result = await api(
         `/patients?page=${page}&limit=10&search=${encodeURIComponent(search)}`
       );
-      const payload = result.data ?? result;
-      setPatients(Array.isArray(payload) ? payload : payload.patients ?? []);
-      setPages(payload.totalPages ?? payload.pages ?? 1);
+      // The API returns records in result.data and pagination metadata separately.
+      const records = Array.isArray(result.data)
+        ? result.data
+        : Array.isArray(result.data?.patients)
+          ? result.data.patients
+          : Array.isArray(result.patients)
+            ? result.patients
+            : [];
+      const totalPages =
+        result.pagination?.totalPages ??
+        result.data?.pagination?.totalPages ??
+        result.totalPages ??
+        1;
+
+      setPatients(records);
+      setPages(Math.max(1, totalPages));
+      if (page > Math.max(1, totalPages)) {
+        setPage(Math.max(1, totalPages));
+      }
     } catch (err) {
       setError(err.message);
     } finally {
