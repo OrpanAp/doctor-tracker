@@ -72,6 +72,7 @@ async function createDoctor(req, res, next) {
       email,
       phone,
       department,
+      hospital,
       experienceYears,
       status,
     } = req.body;
@@ -94,6 +95,7 @@ async function createDoctor(req, res, next) {
       email,
       phone,
       department,
+      hospital,
       experienceYears,
       status,
     });
@@ -118,6 +120,7 @@ async function updateDoctor(req, res, next) {
       "email",
       "phone",
       "department",
+      "hospital",
       "experienceYears",
       "status",
     ];
