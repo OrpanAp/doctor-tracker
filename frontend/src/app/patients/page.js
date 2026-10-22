@@ -334,9 +334,9 @@ export default function PatientsPage() {
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Phone</dt><dd className="mt-1 break-all text-slate-800">{patient.phone || "—"}</dd></div>
                   <div className="col-span-2 min-w-0"><dt className="text-xs font-medium text-slate-500">Assigned doctor</dt><dd className="mt-1 break-words text-slate-800">{patient.doctor?.name || "—"}</dd></div>
                 </dl>
-                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
-                  <button type="button" onClick={() => startEdit(patient)} className="inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">Edit</button>
-                  <button type="button" onClick={() => deletePatient(patient)} className="inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2">Delete</button>
+                <div className="mt-4 flex w-full flex-nowrap items-stretch gap-3 border-t border-slate-100 pt-3" style={{ display: "flex", flexDirection: "row", flexWrap: "nowrap", gap: "0.75rem" }}>
+                  <button type="button" onClick={() => startEdit(patient)} className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" style={{ flex: "1 1 0%", minWidth: 0 }}>Edit</button>
+                  <button type="button" onClick={() => deletePatient(patient)} className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2" style={{ flex: "1 1 0%", minWidth: 0 }}>Delete</button>
                 </div>
               </article>
             ))}
