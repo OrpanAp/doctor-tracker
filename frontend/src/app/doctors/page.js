@@ -35,13 +35,13 @@ export default function DoctorsPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
-  function handleRequestError(err) {
+  const handleRequestError = useCallback((err) => {
     if (/unauthori[sz]ed|not authorized|authentication|token|login|session/i.test(err.message || "")) {
       router.replace("/login");
       return;
     }
     setError(err.message || "Something went wrong. Please try again.");
-  }
+  }, [router]);
 
   const loadDoctors = useCallback(async () => {
     setLoading(true);
@@ -84,7 +84,7 @@ export default function DoctorsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, search, statusFilter, specialtyFilter, dateFrom, dateTo, router]);
+  }, [page, limit, search, statusFilter, specialtyFilter, dateFrom, dateTo, handleRequestError]);
 
   useEffect(() => {
     const timer = setTimeout(loadDoctors, 250);
