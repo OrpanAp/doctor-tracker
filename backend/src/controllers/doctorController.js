@@ -1,4 +1,4 @@
-const Doctor = require("../models/Doctor");
+const Doctor = require("../models/Doctor");\nconst Patient = require("../models/Patient");
 
 async function getDoctors(req, res, next) {
   try {
@@ -14,7 +14,7 @@ async function getDoctors(req, res, next) {
     if (search) {
       const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const regex = new RegExp(escaped, "i");
-      filter.$or = [{ name: regex }, { specialty: regex }, { email: regex }];
+      filter.$or = [{ name: regex }, { specialty: regex }, { email: regex }, { hospital: regex }, { phone: regex }];
     }
 
     if (["active", "inactive"].includes(req.query.status)) {
@@ -84,7 +84,7 @@ async function createDoctor(req, res, next) {
     ) {
       return res.status(400).json({
         success: false,
-        message: "Name, specialty, email and phone are required",
+        message: "Name, specialty, hospital, email and phone are required",
       });
     }
 
@@ -160,7 +160,7 @@ async function updateDoctor(req, res, next) {
 
 async function deleteDoctor(req, res, next) {
   try {
-    const doctor = await Doctor.findByIdAndDelete(req.params.id);
+    const assignedPatients = await Patient.countDocuments({ doctor: req.params.id });\n    if (assignedPatients > 0) {\n      return res.status(409).json({ success: false, message: `Cannot delete this doctor while ${assignedPatients} patient(s) are assigned. Reassign or delete those patients first.` });\n    }\n    const doctor = await Doctor.findByIdAndDelete(req.params.id);
     if (!doctor) {
       return res.status(404).json({
         success: false,
