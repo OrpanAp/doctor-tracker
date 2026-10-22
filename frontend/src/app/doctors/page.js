@@ -296,7 +296,8 @@ export default function DoctorsPage() {
                   <tr key={doctor._id} className="border-t border-slate-100 hover:bg-slate-50">
                     <td className="break-words px-2 py-3">
                       <p className="font-semibold text-slate-800">{doctor.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">{doctor.email}</p>
+                      <p className="mt-1 break-all text-xs text-slate-500">{doctor.email}</p>
+                      <p className="mt-1 break-all text-xs text-slate-500">{doctor.phone || "—"}</p>
                     </td>
                     <td className="break-words px-2 py-3 text-slate-600">{doctor.specialty}</td>
                     <td className="break-words px-2 py-3 text-slate-600">{doctor.hospital || "—"}</td>
