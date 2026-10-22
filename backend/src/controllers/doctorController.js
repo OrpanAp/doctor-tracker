@@ -23,8 +23,23 @@ async function getDoctors(req, res, next) {
     }
 
     if (req.query.specialty) {
-      filter.specialty = req.query.specialty;
+      filter.specialty = String(req.query.specialty).trim();
     }
+
+    if (req.query.hospital) {
+      filter.hospital = { $regex: String(req.query.hospital).trim(), $options: "i" };
+    }
+
+    const dateFilter = {};
+    if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) {
+      dateFilter.$gte = new Date(req.query.dateFrom);
+    }
+    if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) {
+      const end = new Date(req.query.dateTo);
+      end.setHours(23, 59, 59, 999);
+      dateFilter.$lte = end;
+    }
+    if (Object.keys(dateFilter).length) filter.createdAt = dateFilter;
 
     const [doctors, total] = await Promise.all([
       Doctor.find(filter)
@@ -72,6 +87,7 @@ async function createDoctor(req, res, next) {
       specialty,
       email,
       phone,
+      hospital,
       department,
       experienceYears,
       status,
@@ -80,6 +96,7 @@ async function createDoctor(req, res, next) {
     if (
       !name?.trim() ||
       !specialty?.trim() ||
+      !hospital?.trim() ||
       !email?.trim() ||
       !phone?.trim()
     ) {
@@ -94,6 +111,7 @@ async function createDoctor(req, res, next) {
       specialty,
       email,
       phone,
+      hospital,
       department,
       experienceYears,
       status,
@@ -118,6 +136,7 @@ async function updateDoctor(req, res, next) {
       "specialty",
       "email",
       "phone",
+      "hospital",
       "department",
       "experienceYears",
       "status",
