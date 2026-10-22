@@ -16,6 +16,10 @@ export default function PatientsPage() {
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [conditionFilter, setConditionFilter] = useState("");
+  const [doctorFilter, setDoctorFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [form, setForm] = useState(emptyForm);
@@ -30,9 +34,17 @@ export default function PatientsPage() {
     setError("");
 
     try {
-      const result = await api(
-        `/patients?page=${page}&limit=10&search=${encodeURIComponent(search)}`
-      );
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: "10",
+        search,
+      });
+      if (conditionFilter.trim()) params.set("condition", conditionFilter.trim());
+      if (doctorFilter) params.set("doctor", doctorFilter);
+      if (dateFrom) params.set("dateFrom", dateFrom);
+      if (dateTo) params.set("dateTo", dateTo);
+
+      const result = await api(`/patients?${params.toString()}`);
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
         ? result.data
@@ -57,7 +69,7 @@ export default function PatientsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, conditionFilter, doctorFilter, dateFrom, dateTo]);
 
   const loadDoctors = useCallback(async () => {
     try {
@@ -281,15 +293,49 @@ export default function PatientsPage() {
 
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 p-4">
-            <input
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Search patient, condition, or phone..."
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 sm:max-w-md"
-            />
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+              <input
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                placeholder="Search patient, condition, or phone..."
+                className="w-full rounded-lg border border-slate-300 px-4 py-3"
+              />
+              <input
+                value={conditionFilter}
+                onChange={(e) => { setConditionFilter(e.target.value); setPage(1); }}
+                placeholder="Filter by condition"
+                aria-label="Filter patients by condition"
+                className="w-full rounded-lg border border-slate-300 px-3 py-3"
+              />
+              <select
+                value={doctorFilter}
+                onChange={(e) => { setDoctorFilter(e.target.value); setPage(1); }}
+                aria-label="Filter patients by assigned doctor"
+                className="w-full rounded-lg border border-slate-300 px-3 py-3"
+              >
+                <option value="">All doctors</option>
+                {doctors.map((doctor) => (
+                  <option key={doctor._id} value={doctor._id}>{doctor.name}</option>
+                ))}
+              </select>
+              <label className="text-xs text-slate-500">
+                Created from
+                <input type="date" value={dateFrom} max={dateTo || undefined}
+                  onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" />
+              </label>
+              <label className="text-xs text-slate-500">
+                Created to
+                <input type="date" value={dateTo} min={dateFrom || undefined}
+                  onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" />
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSearch(""); setConditionFilter(""); setDoctorFilter(""); setDateFrom(""); setDateTo(""); setPage(1); }}
+              className="mt-3 text-sm font-medium text-blue-700 hover:underline"
+            >Clear filters</button>
           </div>
 
           <div className="overflow-x-auto">
