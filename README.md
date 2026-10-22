@@ -181,14 +181,27 @@ Dates use `YYYY-MM-DD`; the start and end dates are inclusive. Page size is boun
 
 ## Visual evidence
 
-The project specification requires actual screenshots of the running UI at desktop and mobile widths. Save genuine screenshots in `screenshots/` and add them here before final submission:
+The following screenshots are generated from the production-built Next.js UI by the CI workflow using fictional demo records (no real database or patient information). The capture job also checks the compact/desktop boundary at 1170px and 1171px.
 
-- `screenshots/dashboard-desktop.png`
-- `screenshots/dashboard-mobile.png`
-- `screenshots/doctors-mobile.png`
-- `screenshots/patients-mobile.png`
+### Dashboard
 
-Capture the running app with fictional/demo records only. Ensure the screenshots show the 1170px compact layout and the 1171px desktop layout. Do not include passwords, session cookies, or real patient data.
+![Dashboard desktop screenshot](screenshots/dashboard-desktop.png)
+
+![Dashboard mobile screenshot](screenshots/dashboard-mobile.png)
+
+### Doctor and patient directories
+
+![Doctors mobile screenshot](screenshots/doctors-mobile.png)
+
+![Patients mobile screenshot](screenshots/patients-mobile.png)
+
+### Required responsive breakpoint
+
+| Compact layout — 1170px | Desktop layout — 1171px |
+|---|---|
+| ![Doctors at 1170px](screenshots/doctors-1170px.png) | ![Doctors at 1171px](screenshots/doctors-1171px.png) |
+
+The screenshot job commits these files to the pull request branch after the backend tests, frontend production build, and lint checks pass.
 
 ## Security and data notes
 
