@@ -11,7 +11,10 @@ async function getPatients(req, res, next) {
     );
     const filter = {};
 
-    if (req.query.doctor && mongoose.isValidObjectId(req.query.doctor)) {
+    if (req.query.doctor) {
+      if (!mongoose.isValidObjectId(req.query.doctor)) {
+        return res.status(400).json({ success: false, message: "Invalid doctor filter" });
+      }
       filter.doctor = req.query.doctor;
     }
 
