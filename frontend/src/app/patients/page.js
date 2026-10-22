@@ -334,9 +334,9 @@ export default function PatientsPage() {
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Phone</dt><dd className="mt-1 break-all text-slate-800">{patient.phone || "—"}</dd></div>
                   <div className="col-span-2 min-w-0"><dt className="text-xs font-medium text-slate-500">Assigned doctor</dt><dd className="mt-1 break-words text-slate-800">{patient.doctor?.name || "—"}</dd></div>
                 </dl>
-                <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-3">
-                  <button type="button" onClick={() => startEdit(patient)} className="min-h-10 font-semibold text-blue-700">Edit</button>
-                  <button type="button" onClick={() => deletePatient(patient)} className="min-h-10 font-semibold text-red-700">Delete</button>
+                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+                  <button type="button" onClick={() => startEdit(patient)} className="inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">Edit</button>
+                  <button type="button" onClick={() => deletePatient(patient)} className="inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2">Delete</button>
                 </div>
               </article>
             ))}
@@ -376,19 +376,23 @@ export default function PatientsPage() {
                     <td className="break-words px-2 py-3 text-slate-600">
                       {patient.doctor?.name || "—"}
                     </td>
-                    <td className="break-words px-2 py-3">
-                      <button
-                        onClick={() => startEdit(patient)}
-                        className="mr-3 font-medium text-blue-600 hover:underline"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deletePatient(patient)}
-                        className="font-medium text-red-600 hover:underline"
-                      >
-                        Delete
-                      </button>
+                    <td className="px-2 py-3 align-middle">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => startEdit(patient)}
+                          className="inline-flex min-h-9 min-w-[4.25rem] items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 font-semibold text-blue-700 transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deletePatient(patient)}
+                          className="inline-flex min-h-9 min-w-[4.25rem] items-center justify-center rounded-md border border-red-200 bg-red-50 px-3 py-1.5 font-semibold text-red-700 transition hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
