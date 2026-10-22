@@ -10,8 +10,8 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
-// The API is deployed behind one trusted reverse proxy (Render).
-app.set("trust proxy", 1);
+// The production API is deployed behind one trusted reverse proxy (Render).
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 
 app.use(helmet());
 
