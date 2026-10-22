@@ -79,12 +79,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin ${{ github.event.pull_request.head.ref }}
-          git rebase origin/${{ github.event.pull_request.head.ref }}
           git add screenshots/*.png
           if git diff --cached --quiet; then
             echo "Screenshots are already up to date."
           else
-            git commit -m "docs: add desktop and mobile UI screenshots"
+            git commit -m "docs: update desktop and mobile UI screenshots"
+            git fetch origin ${{ github.event.pull_request.head.ref }}
+            git rebase origin/${{ github.event.pull_request.head.ref }}
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           fi
