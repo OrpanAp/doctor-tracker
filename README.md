@@ -1,75 +1,111 @@
-# Doctor Tracker
+# 🩺 Doctor Tracker
 
-Doctor Tracker is a responsive administrative portal for securely managing doctors and their patients. Administrators can search, filter and paginate records, maintain doctor–patient assignments, and review current totals and six-month registration trends from a single dashboard.
+<p align="center">
+  <strong>A modern, full-stack healthcare administration dashboard.</strong><br />
+  Manage doctors, organize patient records, track key metrics, and keep everyday clinic administration in one responsive workspace.
+</p>
 
-## Live demo and source
+<p align="center">
+  <a href="https://doctor-tracker-sage.vercel.app/"><strong>🚀 Open Live Demo</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/OrpanAp/doctor-tracker">Source Code</a>
+  &nbsp;·&nbsp;
+  <a href="https://doctor-tracker-2scb.onrender.com/api/health">API Health</a>
+</p>
 
-- **Frontend:** https://doctor-tracker-sage.vercel.app/
-- **Backend health check:** https://doctor-tracker-2scb.onrender.com/api/health
-- **GitHub repository:** https://github.com/OrpanAp/doctor-tracker
+<p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-App%20Router-black?logo=next.js" />
+  <img alt="React" src="https://img.shields.io/badge/React-19-149eca?logo=react" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-Styling-06B6D4?logo=tailwindcss" />
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-Backend-339933?logo=nodedotjs" />
+  <img alt="Express" src="https://img.shields.io/badge/Express-REST%20API-777777?logo=express" />
+  <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb" />
+</p>
 
-Use your own administrator account for the demo. Do not publish or commit real passwords or patient data.
+---
 
-## Features
+## ✨ At a glance
 
-- JWT authentication in HTTP-only cookies, logout, protected REST endpoints, and rate-limited login attempts.
-- Doctor management: create, list, edit, delete, search, status/specialty/hospital filters, registration-date range, pagination, and a shortcut to each doctor's patient list.
-- Doctor records include name, specialty, hospital, phone, email, department, years of experience and status.
-- Patient management: create, list, edit, delete, search, filter by condition, assigned doctor and registration-date range, and pagination.
-- Dashboard: doctor and patient totals, active/inactive doctors, patient counts by doctor and condition, recent patients, and six-month doctor/patient registration charts.
-- Server-side validation, consistent API errors, duplicate-email handling, safe search escaping, MongoDB indexes and bounded pagination.
-- Compact card-based layouts through **1170px**; desktop tables/layout start at **1171px**.
+Doctor Tracker is a responsive administrative application built to make everyday doctor and patient record management simpler. It combines searchable directories, doctor–patient assignments, secure administrator authentication, and an analytics dashboard in a single interface.
 
-## Technology stack
+**Live application:** [doctor-tracker-sage.vercel.app](https://doctor-tracker-sage.vercel.app/)  
+**Backend health endpoint:** [doctor-tracker-2scb.onrender.com/api/health](https://doctor-tracker-2scb.onrender.com/api/health)  
+**Repository:** [github.com/OrpanAp/doctor-tracker](https://github.com/OrpanAp/doctor-tracker)
 
-- Frontend: Next.js App Router, React, Tailwind CSS
-- Backend: Node.js, Express.js
-- Database: MongoDB Atlas or local MongoDB, accessed with Mongoose
-- API: REST over HTTP(S)
-- Authentication: bcryptjs password hashes, JWT and HTTP-only cookies
+> **Demo safety:** Sign in using an administrator account configured for the environment. Never publish credentials or enter real patient information into a public demo.
 
-The frontend and API are separate applications. The frontend communicates with the standalone Express API through REST endpoints. In production, Next.js rewrites same-origin `/api/*` requests to the backend to avoid cross-origin cookie issues.
+## 🧭 Explore the application
 
-## Architecture and data flow
+- **Dashboard** — review doctor and patient totals, active/inactive doctors, recent patients, patient groupings, and six-month registration trends.
+- **Doctors** — create and maintain doctor profiles, search and filter records, paginate results, and open a doctor's patient list.
+- **Patients** — manage patient records, find entries quickly, filter by condition or assigned doctor, and maintain doctor assignments.
+- **Authentication** — use an administrator sign-in flow with a server-managed HTTP-only session cookie.
+
+## 🚀 Feature highlights
+
+### Doctor directory
+- Create, view, edit, and delete doctor records.
+- Store name, specialty, hospital, department, email, phone, experience, and status.
+- Search and filter by status, specialty, hospital, and registration-date range.
+- Use paginated results and navigate to each doctor's patient list.
+
+### Patient directory
+- Create, view, edit, and delete patient records.
+- Search and filter by condition, assigned doctor, and registration-date range.
+- Assign patients to doctors and browse records with pagination.
+- Prevent deleting a doctor while patient records still reference them.
+
+### Dashboard and data insights
+- View total doctors and patients, including active/inactive doctor counts.
+- Explore patient counts by doctor and condition.
+- Review recent patient records and six-month registration charts.
+
+### Responsive, resilient interface
+- Compact card-based layouts through **1170px** and desktop layouts from **1171px**.
+- Server-side validation and consistent API error responses.
+- Duplicate-email handling, escaped search input, bounded pagination, and MongoDB indexes for common queries.
+
+## 🧰 Technology stack
+
+| Layer | Technologies |
+| --- | --- |
+| Frontend | Next.js App Router, React, Tailwind CSS |
+| Backend | Node.js, Express.js |
+| Database | MongoDB Atlas or local MongoDB, with Mongoose |
+| Authentication | bcryptjs password hashing, JWT, HTTP-only cookies |
+| Communication | REST API over HTTP(S) |
+| Deployment | Vercel frontend, Render backend |
+
+## 🏗️ Architecture
+
+The frontend and backend are separate applications with clearly defined responsibilities. The Next.js frontend sends REST requests to the Express API; Mongoose models and MongoDB persist application data.
 
 ```mermaid
 flowchart LR
-  A[Browser] -->|Next.js UI| F[Next.js frontend]
-  F -->|/api REST requests + cookie| E[Express API]
-  E --> H[Authentication middleware]
-  H --> R[REST controllers]
-  R --> M[Mongoose models]
-  M --> D[(MongoDB)]
-  R -->|JSON responses| F
+    U[Administrator] --> W[Next.js frontend]
+    W -->|REST requests + cookie| A[Express API]
+    A --> AUTH[Authentication middleware]
+    AUTH --> C[Controllers and validation]
+    C --> M[Mongoose models]
+    M --> DB[(MongoDB)]
+    C -->|JSON responses| W
 ```
 
-- The browser renders the dashboard and directory pages.
-- Login validates credentials against a bcrypt password hash and sets an HTTP-only JWT cookie.
-- Doctor, patient and dashboard endpoints require a valid session.
-- Controllers validate inputs, build MongoDB filters, and return paginated JSON.
-- The dashboard uses aggregation pipelines for patient groupings and monthly registration statistics.
+### Request flow
+1. An administrator signs in with configured credentials.
+2. The backend verifies the password hash and issues a JWT in an HTTP-only cookie.
+3. Protected doctor, patient, and dashboard endpoints validate the session.
+4. Controllers validate input, query or aggregate MongoDB data, and return JSON.
+5. The frontend renders results, filters, pagination controls, and dashboard visualizations.
 
-## Technical decisions
+In production, the Next.js rewrite forwards same-origin `/api/*` requests to the standalone backend. This helps keep browser requests aligned with the cookie-based authentication setup.
 
-### 1. Separate frontend and backend with a REST API
+## ⚙️ Run locally
 
-The specification explicitly requires a separate Next.js client and standalone Express server. Keeping the services separate gives the UI and API clear responsibilities, allows the API to be tested independently, and makes each service deployable on its own. The frontend's production rewrite sends `/api/*` calls to the Express service while keeping browser requests same-origin for cookie handling.
-
-### 2. HTTP-only JWT cookies rather than browser-managed tokens
-
-Passwords are stored as bcrypt hashes, and the server issues a short-lived JWT in an HTTP-only cookie after successful login. JavaScript cannot read the cookie directly, reducing exposure to token theft through client-side scripts. The trade-off is that cookie-based authentication requires careful HTTPS, CORS, SameSite and origin configuration; the deployment must keep the frontend origin and backend cookie settings aligned. Login attempts are rate-limited.
-
-### 3. Bounded pagination and aggregation
-
-Directory endpoints cap page size, run record queries and count queries concurrently, and return pagination metadata so the UI can render predictable controls. Dashboard groupings use MongoDB aggregation rather than loading all records into application memory. Indexes support common relationship, date, status and condition queries. Regex-based substring search is convenient for a small administrative dataset; for very large datasets, consider normalized search fields or MongoDB Atlas Search.
-
-## Prerequisites
-
-- Node.js (use a current supported LTS release) and npm
-- A MongoDB database (local MongoDB or MongoDB Atlas)
+### Requirements
+- Node.js and npm (a current supported LTS release is recommended)
+- MongoDB Atlas or a local MongoDB instance
 - Git
-
-## Local setup
 
 ### 1. Clone the repository
 
@@ -78,45 +114,51 @@ git clone https://github.com/OrpanAp/doctor-tracker.git
 cd doctor-tracker
 ```
 
-### 2. Configure and start the backend
+### 2. Configure the backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Copy `backend/.env.example` to `backend/.env` and fill in your own values:
+Copy `backend/.env.example` to `backend/.env` and set your own values:
 
-- `MONGODB_URI`: your database connection string
-- `CLIENT_URL=http://localhost:3000`
-- `JWT_SECRET`: a random secret of at least 32 characters
-- `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`: initial administrator details; use a password of at least 12 characters
+```env
+MONGODB_URI=your_mongodb_connection_string
+CLIENT_URL=http://localhost:3000
+JWT_SECRET=replace_with_a_long_random_secret
+ADMIN_NAME=Administrator
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=replace_with_a_strong_password
+```
 
-Generate a strong JWT secret instead of using the example value. Never commit `backend/.env`.
+Use a unique JWT secret of at least 32 characters and an administrator password of at least 12 characters. These are illustrative values, not working credentials. Keep `backend/.env` private and out of version control.
 
-Create the initial admin account (the script hashes the password and will not overwrite an existing account):
+Create the initial administrator account:
 
 ```bash
 npm run create-admin
 ```
 
-If the database already contains doctor records without the new hospital field, run the one-time migration:
+The script hashes the password and does not overwrite an existing administrator.
+
+**Optional migration:** If your database has older doctor records without the hospital field, run this once:
 
 ```bash
 npm run migrate:doctor-hospital
 ```
 
-It marks missing hospital values as `Not specified`; edit those records to enter the real hospital name.
+Records missing a hospital value are marked `Not specified`; update them with the correct information afterward.
 
-Start the API in a terminal and keep it running:
+Start the backend and leave this terminal running:
 
 ```bash
 npm run dev
 ```
 
-The default API base is `http://localhost:5000/api`. Check `http://localhost:5000/api/health`.
+The API defaults to `http://localhost:5000/api`. Verify it at [http://localhost:5000/api/health](http://localhost:5000/api/health).
 
-### 3. Configure and start the frontend
+### 3. Configure the frontend
 
 Open a second terminal from the repository root:
 
@@ -125,7 +167,7 @@ cd frontend
 npm install
 ```
 
-Copy `frontend/.env.example` to `frontend/.env.local`. The default value is:
+Copy `frontend/.env.example` to `frontend/.env.local`. For local development, set:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
@@ -137,80 +179,105 @@ Start the frontend:
 npm run dev
 ```
 
-Open http://localhost:3000 and sign in with the admin credentials you configured. Do not add real credentials to the repository.
+Visit [http://localhost:3000](http://localhost:3000) and sign in using the administrator credentials you configured in the backend.
 
-### 4. Checks
+### 4. Run project checks
 
-From `backend/`:
+Run these commands from the relevant directory.
+
+**Backend** (`backend/`):
 
 ```bash
 npm test
 ```
 
-From `frontend/`:
+**Frontend** (`frontend/`):
 
 ```bash
 npm run build
 npm run lint
 ```
 
-These commands should be run after changes and before submission. A successful local run does not by itself prove the hosted deployment is healthy.
+Run checks after making changes. A successful local build does not, by itself, guarantee that the hosted deployment is healthy.
 
-## REST API overview
+## 🔌 REST API reference
 
-All doctor, patient and dashboard endpoints require authentication.
+Unless stated otherwise, doctor, patient, and dashboard endpoints require authentication.
 
 | Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/auth/login` | Authenticate and set session cookie |
-| POST | `/api/auth/logout` | Clear session cookie |
-| GET | `/api/auth/me` | Return current administrator |
-| GET | `/api/health` | API health check |
-| GET | `/api/dashboard` | Totals, groupings and six-month trends |
-| GET / POST | `/api/doctors` | List/filter or create doctors |
-| GET / PATCH / DELETE | `/api/doctors/:id` | Read, update or delete a doctor |
-| GET / POST | `/api/patients` | List/filter or create patients |
-| GET / PATCH / DELETE | `/api/patients/:id` | Read, update or delete a patient |
+| --- | --- | --- |
+| `GET` | `/api/health` | Check API health |
+| `POST` | `/api/auth/login` | Authenticate and set the session cookie |
+| `POST` | `/api/auth/logout` | Clear the session cookie |
+| `GET` | `/api/auth/me` | Return the current administrator |
+| `GET` | `/api/dashboard` | Return totals, groupings, and six-month trends |
+| `GET` / `POST` | `/api/doctors` | List/filter doctors or create a doctor |
+| `GET` / `PATCH` / `DELETE` | `/api/doctors/:id` | Read, update, or delete a doctor |
+| `GET` / `POST` | `/api/patients` | List/filter patients or create a patient |
+| `GET` / `PATCH` / `DELETE` | `/api/patients/:id` | Read, update, or delete a patient |
 
-### Directory query parameters
+### Directory filters
 
-- Doctors: `page`, `limit`, `search`, `status`, `specialty`, `hospital`, `dateFrom`, `dateTo`.
-- Patients: `page`, `limit`, `search`, `condition`, `doctor`, `dateFrom`, `dateTo`.
+| Directory | Supported query parameters |
+| --- | --- |
+| Doctors | `page`, `limit`, `search`, `status`, `specialty`, `hospital`, `dateFrom`, `dateTo` |
+| Patients | `page`, `limit`, `search`, `condition`, `doctor`, `dateFrom`, `dateTo` |
 
-Dates use `YYYY-MM-DD`; the start and end dates are inclusive. Page size is bounded by the API.
+Date filters use `YYYY-MM-DD`; start and end dates are inclusive. The API limits page size to keep queries bounded.
 
-## Visual evidence
+## 🖼️ Screenshots
 
-The following screenshots are generated from the production-built Next.js UI by the CI workflow using fictional demo records (no real database or patient information). The capture job also checks the compact/desktop boundary at 1170px and 1171px.
+The repository includes screenshot references for the dashboard and responsive directories. If an image does not render, check that the corresponding file exists in the `screenshots/` directory on the current branch.
 
 ### Dashboard
 
-![Dashboard desktop screenshot](screenshots/dashboard-desktop.png)
+![Doctor Tracker dashboard — desktop](screenshots/dashboard-desktop.png)
 
-![Dashboard mobile screenshot](screenshots/dashboard-mobile.png)
+![Doctor Tracker dashboard — mobile](screenshots/dashboard-mobile.png)
 
 ### Doctor and patient directories
 
-![Doctors mobile screenshot](screenshots/doctors-mobile.png)
+![Doctor directory — mobile](screenshots/doctors-mobile.png)
 
-![Patients mobile screenshot](screenshots/patients-mobile.png)
+![Patient directory — mobile](screenshots/patients-mobile.png)
 
-### Required responsive breakpoint
+### Responsive breakpoint
 
 | Compact layout — 1170px | Desktop layout — 1171px |
-|---|---|
+| --- | --- |
 | ![Doctors at 1170px](screenshots/doctors-1170px.png) | ![Doctors at 1171px](screenshots/doctors-1171px.png) |
 
-The screenshot job commits these files to the pull request branch after the backend tests, frontend production build, and lint checks pass.
+## 🔐 Security and data integrity
 
-## Security and data notes
+- Never commit real `.env` files, passwords, JWT secrets, or session cookies.
+- Use HTTPS and a long, unique JWT secret in production.
+- Limit MongoDB Atlas network access to trusted deployment sources where practical.
+- Use fictional records for screenshots and public demonstrations.
+- Login attempts are rate-limited; passwords are stored as bcrypt hashes.
+- Doctor deletion is blocked while patients remain assigned, avoiding orphaned references.
 
-- Keep all `.env` files out of version control; commit only example files without secrets.
-- Use HTTPS in production and a long, unique JWT secret.
-- Restrict MongoDB Atlas network access to the deployment environment where possible.
-- Use fictional data for demonstrations.
-- A doctor with assigned patients cannot be deleted until those patients are reassigned or deleted, preventing orphaned patient references.
+## 🧠 Engineering notes
 
-## Current validation status
+- **Separate services:** independently deployable frontend and API boundaries keep responsibilities clear.
+- **HTTP-only cookie authentication:** JavaScript cannot directly read the session cookie; production still requires correct HTTPS, cookie, CORS, and origin configuration.
+- **Bounded pagination:** directory endpoints return manageable pages and pagination metadata.
+- **Database aggregation:** dashboard groupings and monthly trends are computed by MongoDB aggregation pipelines rather than loading every record into application memory.
+- **Search trade-off:** substring search suits smaller administrative datasets; larger deployments may benefit from normalized search fields or MongoDB Atlas Search.
 
-Automated tests cover shared search/date-filter utilities. Before claiming production readiness, run the backend test suite, frontend build/lint, and manual login/CRUD/filter/pagination checks against the deployed environment. Add the genuine screenshots listed above before submitting.
+## 🗺️ Roadmap ideas
+
+Potential future improvements include role-based permissions, audit logs, appointment scheduling, exportable reports, automated end-to-end tests, and richer accessibility checks.
+
+## 👤 Project
+
+**Doctor Tracker** — a full-stack portfolio project demonstrating responsive UI development, REST API design, authentication, database-backed CRUD workflows, and dashboard analytics.
+
+- **Live app:** https://doctor-tracker-sage.vercel.app/
+- **Repository:** https://github.com/OrpanAp/doctor-tracker
+- **API health:** https://doctor-tracker-2scb.onrender.com/api/health
+
+---
+
+<p align="center">
+  Built with care to make healthcare administration feel more organized.
+</p>
