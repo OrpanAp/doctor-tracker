@@ -164,7 +164,7 @@ export default function DoctorsPage() {
         {showForm && (
           <form onSubmit={saveDoctor} className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="mb-5 text-lg font-bold text-slate-900">{editingId ? "Edit doctor" : "Add a doctor"}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 min-[1171px]:grid-cols-2 min-[1171px]:grid-cols-3">
               {[
                 ["name", "Full name", "text"],
                 ["specialty", "Specialty", "text"],
@@ -217,11 +217,11 @@ export default function DoctorsPage() {
                 setPage(1);
               }}
               placeholder="Search name, specialty, or email..."
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 sm:max-w-md"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
 
-          <div className="grid gap-3 p-3 sm:grid-cols-2 min-[1171px]:hidden">
+          <div className="grid gap-3 p-3 min-[1171px]:grid-cols-2 min-[1171px]:hidden">
             {doctors.map((doctor) => (
               <article key={doctor._id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
@@ -284,7 +284,7 @@ export default function DoctorsPage() {
             </table>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-t border-slate-200 bg-slate-50 p-4 min-[1171px]:flex-row min-[1171px]:items-center min-[1171px]:justify-between">
             <p className="text-sm font-semibold text-slate-800" aria-live="polite">
               Page {page} of {pages}
             </p>
