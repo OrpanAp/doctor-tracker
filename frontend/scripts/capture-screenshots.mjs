@@ -69,20 +69,20 @@ try {
   const mobileDoctors = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await mockApi(mobileDoctors);
   await mobileDoctors.goto(baseURL + "/doctors", { waitUntil: "networkidle" });
-  await mobileDoctors.getByText("Dr. Sarah Ahmed").waitFor();
+  await mobileDoctors.getByRole("heading", { name: "Dr. Sarah Ahmed" }).waitFor();
   await mobileDoctors.screenshot({ path: path.join(outputDir, "doctors-mobile.png"), fullPage: true });
 
   const mobilePatients = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await mockApi(mobilePatients);
   await mobilePatients.goto(baseURL + "/patients", { waitUntil: "networkidle" });
-  await mobilePatients.getByText("Ayesha Karim").waitFor();
+  await mobilePatients.getByRole("heading", { name: "Ayesha Karim" }).waitFor();
   await mobilePatients.screenshot({ path: path.join(outputDir, "patients-mobile.png"), fullPage: true });
 
   for (const width of [1170, 1171]) {
     const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
     await mockApi(page);
     await page.goto(baseURL + "/doctors", { waitUntil: "networkidle" });
-    await page.getByText("Dr. Sarah Ahmed").waitFor();
+    await page.getByRole("heading", { name: "Dr. Sarah Ahmed" }).waitFor();
     await page.screenshot({ path: path.join(outputDir, `doctors-${width}px.png`), fullPage: true });
     await page.close();
   }
