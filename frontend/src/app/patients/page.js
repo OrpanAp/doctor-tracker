@@ -21,7 +21,9 @@ export default function PatientsPage() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [pages, setPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -36,7 +38,7 @@ export default function PatientsPage() {
     try {
       const params = new URLSearchParams({
         page: String(page),
-        limit: "10",
+        limit: String(limit),
         search,
       });
       if (conditionFilter.trim()) params.set("condition", conditionFilter.trim());
@@ -61,6 +63,7 @@ export default function PatientsPage() {
 
       setPatients(records);
       setPages(Math.max(1, totalPages));
+      setTotalRecords(result.pagination?.total ?? result.data?.pagination?.total ?? records.length);
       if (page > Math.max(1, totalPages)) {
         setPage(Math.max(1, totalPages));
       }
@@ -69,7 +72,7 @@ export default function PatientsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search, conditionFilter, doctorFilter, dateFrom, dateTo]);
+  }, [page, limit, search, conditionFilter, doctorFilter, dateFrom, dateTo]);
 
   const loadDoctors = useCallback(async () => {
     try {
@@ -403,23 +406,23 @@ export default function PatientsPage() {
             </table>
           </div>
 
-          <div className="flex items-center justify-between border-t border-slate-200 p-4">
-            <span className="text-sm text-slate-500">Page {page} of {pages}</span>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 p-4">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+              <span>{totalRecords === 0 ? "Showing 0 records" : `Showing ${(page - 1) * limit + 1}–${Math.min(page * limit, totalRecords)} of ${totalRecords}`}</span>
+              <label className="flex items-center gap-2">
+                Rows per page
+                <select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+                  className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-slate-700">
+                  <option value={10}>10</option><option value={25}>25</option><option value={50}>50</option>
+                </select>
+              </label>
+              <span>Page {page} of {pages}</span>
+            </div>
             <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40"
-              >
-                Previous
-              </button>
-              <button
-                disabled={page >= pages}
-                onClick={() => setPage((p) => p + 1)}
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40"
-              >
-                Next
-              </button>
+              <button disabled={page <= 1 || loading} onClick={() => setPage(1)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40">First</button>
+              <button disabled={page <= 1 || loading} onClick={() => setPage((p) => p - 1)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40">Previous</button>
+              <button disabled={page >= pages || loading} onClick={() => setPage((p) => p + 1)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40">Next</button>
+              <button disabled={page >= pages || loading} onClick={() => setPage(pages)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40">Last</button>
             </div>
           </div>
         </section>
