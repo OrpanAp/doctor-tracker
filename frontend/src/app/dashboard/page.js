@@ -89,6 +89,26 @@ export default function DashboardPage() {
           ))}
         </section>
 
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 className="text-lg font-bold text-slate-900">Registration trends</h3>
+          <p className="mt-1 text-sm text-slate-500">New doctors and patients registered over the last six months.</p>
+          <div className="mt-5 grid grid-cols-6 gap-2 sm:gap-4">
+            {(data?.monthlyPatientRegistrations || []).map((item, index) => {
+              const doctorCount = data?.monthlyDoctorRegistrations?.[index]?.count || 0;
+              const max = Math.max(1, ...(data?.monthlyPatientRegistrations || []).map((x) => x.count), ...(data?.monthlyDoctorRegistrations || []).map((x) => x.count));
+              return <div key={item.month + item.year} className="flex min-w-0 flex-col items-center gap-2">
+                <div className="flex h-36 w-full items-end justify-center gap-1 rounded-lg bg-slate-50 px-1">
+                  <div title={item.count + " patients"} className="w-1/3 rounded-t bg-blue-600" style={{ height: Math.max(3, (item.count / max) * 100) + "%" }} />
+                  <div title={doctorCount + " doctors"} className="w-1/3 rounded-t bg-emerald-500" style={{ height: Math.max(3, (doctorCount / max) * 100) + "%" }} />
+                </div>
+                <span className="text-center text-xs text-slate-500">{item.month}</span>
+                <span className="text-[10px] font-semibold text-slate-700">{item.count} / {doctorCount}</span>
+              </div>;
+            })}
+          </div>
+          <p className="mt-3 text-xs text-slate-500">Blue = patients · Green = doctors. Values below each month show patient / doctor registrations.</p>
+        </section>
+
         <section className="mt-8 grid gap-6 min-[1171px]:grid-cols-2">
           <article className="rounded-2xl border border-slate-200 bg-white p-6">
             <div className="mb-5 flex items-center justify-between">
