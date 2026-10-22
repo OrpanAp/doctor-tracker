@@ -159,8 +159,16 @@ export default function DashboardPage() {
             <h3 className="text-lg font-bold text-slate-900">Recent patients</h3>
             <Link href="/patients" className="text-sm font-semibold text-blue-600 hover:text-blue-800">View all →</Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="grid gap-3 min-[1171px]:hidden">
+            {(data?.recentPatients || []).map((patient) => <article key={patient._id} className="min-w-0 rounded-xl border border-slate-100 p-3">
+              <p className="break-words font-semibold text-slate-800">{patient.name}</p>
+              <p className="mt-1 break-words text-sm text-slate-600">{patient.condition}</p>
+              <p className="mt-1 break-words text-xs text-slate-500">Age: {patient.age ?? "—"} · Doctor: {patient.doctor?.name || "—"}</p>
+            </article>)}
+            {(data?.recentPatients || []).length === 0 && <p className="py-6 text-center text-sm text-slate-500">No patients registered yet.</p>}
+          </div>
+          <div className="hidden min-[1171px]:block">
+            <table className="w-full table-fixed text-left text-sm">
               <thead className="border-b border-slate-200 text-slate-500">
                 <tr>
                   <th className="px-3 py-3 font-medium">Patient</th>
