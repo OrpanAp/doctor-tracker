@@ -18,6 +18,10 @@ const emptyForm = {
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [specialtyFilter, setSpecialtyFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [form, setForm] = useState(emptyForm);
@@ -32,9 +36,17 @@ export default function DoctorsPage() {
     setError("");
 
     try {
-      const result = await api(
-        `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}`
-      );
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: "10",
+        search,
+      });
+      if (statusFilter) params.set("status", statusFilter);
+      if (specialtyFilter.trim()) params.set("specialty", specialtyFilter.trim());
+      if (dateFrom) params.set("dateFrom", dateFrom);
+      if (dateTo) params.set("dateTo", dateTo);
+
+      const result = await api(`/doctors?${params.toString()}`);
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
         ? result.data
@@ -59,7 +71,7 @@ export default function DoctorsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, statusFilter, specialtyFilter, dateFrom, dateTo]);
 
   useEffect(() => {
     const timer = setTimeout(loadDoctors, 250);
@@ -213,15 +225,48 @@ export default function DoctorsPage() {
 
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 p-4">
-            <input
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Search name, specialty, or email..."
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 sm:max-w-md"
-            />
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+              <input
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                placeholder="Search name, specialty, email, hospital..."
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+                className="w-full rounded-lg border border-slate-300 px-3 py-3"
+                aria-label="Filter doctors by status"
+              >
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <input
+                value={specialtyFilter}
+                onChange={(e) => { setSpecialtyFilter(e.target.value); setPage(1); }}
+                placeholder="Exact specialty filter"
+                aria-label="Filter doctors by specialty"
+                className="w-full rounded-lg border border-slate-300 px-3 py-3"
+              />
+              <label className="text-xs text-slate-500">
+                Created from
+                <input type="date" value={dateFrom} max={dateTo || undefined}
+                  onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" />
+              </label>
+              <label className="text-xs text-slate-500">
+                Created to
+                <input type="date" value={dateTo} min={dateFrom || undefined}
+                  onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm" />
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSearch(""); setStatusFilter(""); setSpecialtyFilter(""); setDateFrom(""); setDateTo(""); setPage(1); }}
+              className="mt-3 text-sm font-medium text-blue-700 hover:underline"
+            >Clear filters</button>
           </div>
 
           <div className="overflow-x-auto">
