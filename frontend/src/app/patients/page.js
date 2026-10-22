@@ -16,6 +16,10 @@ export default function PatientsPage() {
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [conditionFilter, setConditionFilter] = useState("");
+  const [doctorFilter, setDoctorFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [form, setForm] = useState(emptyForm);
@@ -31,7 +35,7 @@ export default function PatientsPage() {
 
     try {
       const result = await api(
-        `/patients?page=${page}&limit=10&search=${encodeURIComponent(search)}`
+        `/patients?page=${page}&limit=10&search=${encodeURIComponent(search)}&condition=${encodeURIComponent(conditionFilter)}&doctor=${encodeURIComponent(doctorFilter)}&dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}`
       );
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
@@ -57,7 +61,7 @@ export default function PatientsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, conditionFilter, doctorFilter, dateFrom, dateTo]);
 
   const loadDoctors = useCallback(async () => {
     try {
@@ -73,6 +77,11 @@ export default function PatientsPage() {
     const timer = setTimeout(loadPatients, 250);
     return () => clearTimeout(timer);
   }, [loadPatients]);
+
+  useEffect(() => {
+    const selectedDoctor = new URLSearchParams(window.location.search).get("doctor");
+    if (selectedDoctor) setDoctorFilter(selectedDoctor);
+  }, []);
 
   useEffect(() => {
     loadDoctors();
