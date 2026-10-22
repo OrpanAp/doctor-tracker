@@ -45,7 +45,7 @@ jobs:
       - run: npm run lint
 
   visual-evidence:
-    if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'push' && github.ref_name == 'fix/complete-specification')
+    if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'fix/complete-specification'))
     needs: [backend, frontend]
     runs-on: ubuntu-latest
     permissions:
