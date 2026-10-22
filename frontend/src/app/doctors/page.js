@@ -280,6 +280,10 @@ export default function DoctorsPage() {
 
           <div className="hidden min-[1171px]:block">
             <table className="w-full table-fixed text-left text-xs min-[1400px]:text-sm">
+              <colgroup>
+                <col className="w-[22%]" /><col className="w-[12%]" /><col className="w-[16%]" />
+                <col className="w-[12%]" /><col className="w-[10%]" /><col className="w-[9%]" /><col className="w-[19%]" />
+              </colgroup>
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
                   {["Doctor", "Specialty", "Hospital", "Department", "Experience", "Status", "Actions"].map((heading) => (
