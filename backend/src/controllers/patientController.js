@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const Doctor = require("../models/Doctor");
+const { escapeRegex, buildDateRange } = require("../utils/queryFilters");
 
 async function getPatients(req, res, next) {
   try {
@@ -28,10 +29,9 @@ async function getPatients(req, res, next) {
       };
     }
 
-    const dateFilter = {};
-    if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) dateFilter.$gte = new Date(req.query.dateFrom);
-    if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) { const end = new Date(req.query.dateTo); end.setHours(23, 59, 59, 999); dateFilter.$lte = end; }
-    if (Object.keys(dateFilter).length) filter.createdAt = dateFilter;
+    const dateRange = buildDateRange(req.query.dateFrom, req.query.dateTo);
+    if (dateRange.error) return res.status(400).json({ success: false, message: dateRange.error });
+    if (dateRange.filter) filter.createdAt = dateRange.filter;
 
     if (req.query.search) {
       const search = String(req.query.search)
