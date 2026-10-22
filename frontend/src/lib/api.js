@@ -16,6 +16,14 @@ export async function api(path, options = {}) {
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
+    if (
+      response.status === 401 &&
+      !path.startsWith("/auth/login") &&
+      typeof window !== "undefined" &&
+      window.location.pathname !== "/login"
+    ) {
+      window.location.assign(new URL("/login", window.location.origin).toString());
+    }
     throw new Error(result.message || result.error || "Request failed");
   }
 

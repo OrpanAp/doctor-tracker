@@ -45,10 +45,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 md:flex">
-      <aside className="bg-slate-950 p-6 text-white md:min-h-screen md:w-64">
+    <div className="min-h-screen bg-slate-50 min-[1171px]:flex">
+      <aside className="bg-slate-950 p-6 text-white min-[1171px]:min-h-screen min-[1171px]:w-64">
         <h1 className="mb-8 text-xl font-bold">✚ Doctor Tracker</h1>
-        <nav className="flex gap-2 overflow-x-auto md:flex-col">
+        <nav className="flex flex-wrap gap-2 min-[1171px]:flex-col">
           <Link className="rounded-lg bg-blue-600 px-4 py-3" href="/dashboard">▦ Dashboard</Link>
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/doctors">⚕ Doctors</Link>
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/patients">♙ Patients</Link>
@@ -58,7 +58,7 @@ export default function DashboardPage() {
         </button>
       </aside>
 
-      <main className="min-w-0 flex-1 p-5 md:p-9">
+      <main className="min-w-0 flex-1 p-5 min-[1171px]:p-9">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm text-slate-500">Overview</p>
@@ -76,7 +76,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-5 min-[1171px]:grid-cols-4">
           {stats.map((stat) => (
             <article key={stat.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -89,7 +89,27 @@ export default function DashboardPage() {
           ))}
         </section>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-2">
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 className="text-lg font-bold text-slate-900">Registration trends</h3>
+          <p className="mt-1 text-sm text-slate-500">New doctors and patients registered over the last six months.</p>
+          <div className="mt-5 grid grid-cols-3 gap-3 min-[1171px]:grid-cols-6 min-[1171px]:gap-4">
+            {(data?.monthlyPatientRegistrations || []).map((item, index) => {
+              const doctorCount = data?.monthlyDoctorRegistrations?.[index]?.count || 0;
+              const max = Math.max(1, ...(data?.monthlyPatientRegistrations || []).map((x) => x.count), ...(data?.monthlyDoctorRegistrations || []).map((x) => x.count));
+              return <div key={item.month + item.year} className="flex min-w-0 flex-col items-center gap-2">
+                <div className="flex h-36 w-full items-end justify-center gap-1 rounded-lg bg-slate-50 px-1">
+                  <div title={item.count + " patients"} className="w-1/3 rounded-t bg-blue-600" style={{ height: Math.max(3, (item.count / max) * 100) + "%" }} />
+                  <div title={doctorCount + " doctors"} className="w-1/3 rounded-t bg-emerald-500" style={{ height: Math.max(3, (doctorCount / max) * 100) + "%" }} />
+                </div>
+                <span className="text-center text-xs text-slate-500">{item.month}</span>
+                <span className="text-[10px] font-semibold text-slate-700">{item.count} / {doctorCount}</span>
+              </div>;
+            })}
+          </div>
+          <p className="mt-3 text-xs text-slate-500">Blue = patients · Green = doctors. Values below each month show patient / doctor registrations.</p>
+        </section>
+
+        <section className="mt-8 grid gap-6 min-[1171px]:grid-cols-2">
           <article className="rounded-2xl border border-slate-200 bg-white p-6">
             <div className="mb-5 flex items-center justify-between">
               <h3 className="text-lg font-bold text-slate-900">Patients by condition</h3>
@@ -139,8 +159,16 @@ export default function DashboardPage() {
             <h3 className="text-lg font-bold text-slate-900">Recent patients</h3>
             <Link href="/patients" className="text-sm font-semibold text-blue-600 hover:text-blue-800">View all →</Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="grid gap-3 min-[1171px]:hidden">
+            {(data?.recentPatients || []).map((patient) => <article key={patient._id} className="min-w-0 rounded-xl border border-slate-100 p-3">
+              <p className="break-words font-semibold text-slate-800">{patient.name}</p>
+              <p className="mt-1 break-words text-sm text-slate-600">{patient.condition}</p>
+              <p className="mt-1 break-words text-xs text-slate-500">Age: {patient.age ?? "—"} · Doctor: {patient.doctor?.name || "—"}</p>
+            </article>)}
+            {(data?.recentPatients || []).length === 0 && <p className="py-6 text-center text-sm text-slate-500">No patients registered yet.</p>}
+          </div>
+          <div className="hidden min-[1171px]:block">
+            <table className="w-full table-fixed text-left text-sm">
               <thead className="border-b border-slate-200 text-slate-500">
                 <tr>
                   <th className="px-3 py-3 font-medium">Patient</th>

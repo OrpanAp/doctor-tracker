@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Patient = require("../models/Patient");
 const Doctor = require("../models/Doctor");
+const { escapeRegex, buildDateRange } = require("../utils/queryFilters");
 
 async function getPatients(req, res, next) {
   try {
@@ -11,24 +12,26 @@ async function getPatients(req, res, next) {
     );
     const filter = {};
 
-    if (req.query.doctor && mongoose.isValidObjectId(req.query.doctor)) {
+    if (req.query.doctor) {
+      if (!mongoose.isValidObjectId(req.query.doctor)) {
+        return res.status(400).json({ success: false, message: "Invalid doctor filter" });
+      }
       filter.doctor = req.query.doctor;
     }
 
     if (req.query.condition) {
       filter.condition = {
-        $regex: String(req.query.condition).replace(
-          /[.*+?^${}()|[\]\\]/g,
-          "\\$&",
-        ),
+        $regex: escapeRegex(req.query.condition),
         $options: "i",
       };
     }
 
+    const dateRange = buildDateRange(req.query.dateFrom, req.query.dateTo);
+    if (dateRange.error) return res.status(400).json({ success: false, message: dateRange.error });
+    if (dateRange.filter) filter.createdAt = dateRange.filter;
+
     if (req.query.search) {
-      const search = String(req.query.search)
-        .trim()
-        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const search = escapeRegex(String(req.query.search).trim());
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
         { condition: { $regex: search, $options: "i" } },
@@ -149,6 +152,9 @@ async function updatePatient(req, res, next) {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
     }
 
+    if (Object.keys(updates).length === 0) return res.status(400).json({ success: false, message: "Provide at least one field to update" });
+
+    if (updates.doctor && !mongoose.isValidObjectId(updates.doctor)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     if (updates.doctor && !(await Doctor.exists({ _id: updates.doctor }))) {
       return res
         .status(400)

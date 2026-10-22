@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 const emptyForm = {
   name: "",
   specialty: "",
+  hospital: "",
   email: "",
   phone: "",
   department: "",
@@ -17,6 +18,11 @@ const emptyForm = {
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [specialtyFilter, setSpecialtyFilter] = useState("");
+  const [hospitalFilter, setHospitalFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [form, setForm] = useState(emptyForm);
@@ -32,7 +38,7 @@ export default function DoctorsPage() {
 
     try {
       const result = await api(
-        `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}`
+        `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}&status=${encodeURIComponent(statusFilter)}&specialty=${encodeURIComponent(specialtyFilter)}&hospital=${encodeURIComponent(hospitalFilter)}&dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}`
       );
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
@@ -58,7 +64,7 @@ export default function DoctorsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, statusFilter, specialtyFilter, hospitalFilter, dateFrom, dateTo]);
 
   useEffect(() => {
     const timer = setTimeout(loadDoctors, 250);
@@ -78,6 +84,7 @@ export default function DoctorsPage() {
     setForm({
       name: doctor.name ?? "",
       specialty: doctor.specialty ?? "",
+      hospital: doctor.hospital ?? "",
       email: doctor.email ?? "",
       phone: doctor.phone ?? "",
       department: doctor.department ?? "",
@@ -168,6 +175,7 @@ export default function DoctorsPage() {
               {[
                 ["name", "Full name", "text"],
                 ["specialty", "Specialty", "text"],
+                ["hospital", "Hospital", "text"],
                 ["email", "Email", "email"],
                 ["phone", "Phone", "tel"],
                 ["department", "Department", "text"],
@@ -177,7 +185,7 @@ export default function DoctorsPage() {
                   {label}
                   <input
                     type={type}
-                    required={key !== "phone" && key !== "department"}
+                    required={key !== "department" && key !== "experienceYears"}
                     min={type === "number" ? "0" : undefined}
                     value={form[key]}
                     onChange={(e) => setForm({ ...form, [key]: e.target.value })}
@@ -216,9 +224,28 @@ export default function DoctorsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Search name, specialty, or email..."
+              placeholder="Search name, specialty, hospital, email, or phone..."
               className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
+          </div>
+          <div className="grid gap-3 border-b border-slate-200 p-4 min-[1171px]:grid-cols-5">
+            <label className="text-xs font-semibold text-slate-600">Status
+              <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
+                <option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option>
+              </select>
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Specialty
+              <input value={specialtyFilter} onChange={(e) => { setSpecialtyFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" placeholder="Any specialty" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Hospital
+              <input value={hospitalFilter} onChange={(e) => { setHospitalFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" placeholder="Any hospital" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Created from
+              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Created to
+              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
           </div>
 
           <div className="grid gap-3 p-3 min-[1171px]:grid-cols-2 min-[1171px]:hidden">
@@ -228,6 +255,7 @@ export default function DoctorsPage() {
                   <div className="min-w-0">
                     <h2 className="break-words font-semibold text-slate-900">{doctor.name}</h2>
                     <p className="mt-1 break-all text-sm text-slate-500">{doctor.email}</p>
+                    <p className="mt-1 break-all text-xs text-slate-500">{doctor.phone || "No phone listed"}</p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
                     {doctor.status || "inactive"}
@@ -235,10 +263,13 @@ export default function DoctorsPage() {
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Specialty</dt><dd className="mt-1 break-words text-slate-800">{doctor.specialty || "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Phone</dt><dd className="mt-1 break-all text-slate-800">{doctor.phone || "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Hospital</dt><dd className="mt-1 break-words text-slate-800">{doctor.hospital || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Department</dt><dd className="mt-1 break-words text-slate-800">{doctor.department || "—"}</dd></div>
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Experience</dt><dd className="mt-1 text-slate-800">{doctor.experienceYears ?? 0} years</dd></div>
                 </dl>
                 <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-3">
+                  <Link href={"/patients?doctor=" + doctor._id} className="min-h-10 font-semibold text-emerald-700">Patients</Link>
                   <button type="button" onClick={() => startEdit(doctor)} className="min-h-10 font-semibold text-blue-700">Edit</button>
                   <button type="button" onClick={() => deleteDoctor(doctor)} className="min-h-10 font-semibold text-red-700">Delete</button>
                 </div>
@@ -247,38 +278,45 @@ export default function DoctorsPage() {
             {!loading && doctors.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No doctors found.</p>}
           </div>
 
-          <div className="hidden overflow-x-auto min-[1171px]:block">
-            <table className="w-full text-left text-sm">
+          <div className="hidden min-[1171px]:block">
+            <table className="w-full table-fixed text-left text-xs min-[1400px]:text-sm">
+              <colgroup>
+                <col className="w-[22%]" /><col className="w-[12%]" /><col className="w-[16%]" />
+                <col className="w-[12%]" /><col className="w-[10%]" /><col className="w-[9%]" /><col className="w-[19%]" />
+              </colgroup>
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  {["Doctor", "Specialty", "Department", "Experience", "Status", "Actions"].map((heading) => (
-                    <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">{heading}</th>
+                  {["Doctor", "Specialty", "Hospital", "Department", "Experience", "Status", "Actions"].map((heading) => (
+                    <th key={heading} className="break-words px-2 py-3 font-medium">{heading}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {doctors.map((doctor) => (
                   <tr key={doctor._id} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3">
                       <p className="font-semibold text-slate-800">{doctor.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">{doctor.email}</p>
+                      <p className="mt-1 break-all text-xs text-slate-500">{doctor.email}</p>
+                      <p className="mt-1 break-all text-xs text-slate-500">{doctor.phone || "—"}</p>
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.specialty}</td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.department || "—"}</td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.experienceYears ?? 0} years</td>
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.specialty}</td>
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.hospital || "—"}</td>
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.department || "—"}</td>
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.experienceYears ?? 0} years</td>
+                    <td className="break-words px-2 py-3">
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
                         {doctor.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3">
+                      <Link href={"/patients?doctor=" + doctor._id} className="mr-3 font-medium text-emerald-700 hover:underline">Patients</Link>
                       <button onClick={() => startEdit(doctor)} className="mr-3 font-medium text-blue-600 hover:underline">Edit</button>
                       <button onClick={() => deleteDoctor(doctor)} className="font-medium text-red-600 hover:underline">Delete</button>
                     </td>
                   </tr>
                 ))}
                 {!loading && doctors.length === 0 && (
-                  <tr><td colSpan="6" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
+                  <tr><td colSpan="7" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
                 )}
               </tbody>
             </table>

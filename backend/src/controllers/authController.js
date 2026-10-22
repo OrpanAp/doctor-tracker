@@ -8,7 +8,7 @@ function cookieOptions() {
   return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    sameSite: "lax",
     maxAge: 8 * 60 * 60 * 1000,
     path: "/",
   };
@@ -34,6 +34,13 @@ async function login(req, res, next) {
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
+      });
+    }
+
+    if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+      return res.status(500).json({
+        success: false,
+        message: "Authentication is not configured correctly on the server",
       });
     }
 
@@ -66,7 +73,7 @@ function logout(req, res) {
   res.clearCookie("token", {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    sameSite: "lax",
     path: "/",
   });
 

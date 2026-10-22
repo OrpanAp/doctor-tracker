@@ -16,6 +16,10 @@ export default function PatientsPage() {
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [conditionFilter, setConditionFilter] = useState("");
+  const [doctorFilter, setDoctorFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [form, setForm] = useState(emptyForm);
@@ -31,7 +35,7 @@ export default function PatientsPage() {
 
     try {
       const result = await api(
-        `/patients?page=${page}&limit=10&search=${encodeURIComponent(search)}`
+        `/patients?page=${page}&limit=10&search=${encodeURIComponent(search)}&condition=${encodeURIComponent(conditionFilter)}&doctor=${encodeURIComponent(doctorFilter)}&dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}`
       );
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
@@ -57,7 +61,7 @@ export default function PatientsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, conditionFilter, doctorFilter, dateFrom, dateTo]);
 
   const loadDoctors = useCallback(async () => {
     try {
@@ -75,12 +79,20 @@ export default function PatientsPage() {
   }, [loadPatients]);
 
   useEffect(() => {
+    const selectedDoctor = new URLSearchParams(window.location.search).get("doctor");
+    // The query parameter initializes the directory filter after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (selectedDoctor) setDoctorFilter(selectedDoctor);
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDoctors();
   }, [loadDoctors]);
 
   function startCreate() {
     setEditingId(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, doctor: doctorFilter });
     setError("");
     setNotice("");
     setShowForm(true);
@@ -231,6 +243,7 @@ export default function PatientsPage() {
               <label className="text-sm font-medium text-slate-700">
                 Phone
                 <input
+                  required
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5"
@@ -291,6 +304,23 @@ export default function PatientsPage() {
               className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
+          <div className="grid gap-3 border-b border-slate-200 p-4 min-[1171px]:grid-cols-4">
+            <label className="text-xs font-semibold text-slate-600">Condition
+              <input value={conditionFilter} onChange={(e) => { setConditionFilter(e.target.value); setPage(1); }} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" placeholder="Any condition" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Assigned doctor
+              <select value={doctorFilter} onChange={(e) => { setDoctorFilter(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
+                <option value="">All doctors</option>
+                {doctors.map((doctor) => <option key={doctor._id} value={doctor._id}>{doctor.name}</option>)}
+              </select>
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Registered from
+              <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+            <label className="text-xs font-semibold text-slate-600">Registered to
+              <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="mt-1 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+            </label>
+          </div>
 
           <div className="grid gap-3 p-3 min-[1171px]:grid-cols-2 min-[1171px]:hidden">
             {patients.map((patient) => (
@@ -313,12 +343,16 @@ export default function PatientsPage() {
             {!loading && patients.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No patients found.</p>}
           </div>
 
-          <div className="hidden overflow-x-auto min-[1171px]:block">
-            <table className="w-full text-left text-sm">
+          <div className="hidden min-[1171px]:block">
+            <table className="w-full table-fixed text-left text-xs min-[1400px]:text-sm">
+              <colgroup>
+                <col className="w-[20%]" /><col className="w-[8%]" /><col className="w-[18%]" />
+                <col className="w-[14%]" /><col className="w-[22%]" /><col className="w-[18%]" />
+              </colgroup>
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
                   {["Patient", "Age", "Condition", "Phone", "Assigned doctor", "Actions"].map((heading) => (
-                    <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">
+                    <th key={heading} className="break-words px-2 py-3 font-medium">
                       {heading}
                     </th>
                   ))}
@@ -327,22 +361,22 @@ export default function PatientsPage() {
               <tbody>
                 {patients.map((patient) => (
                   <tr key={patient._id} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-800">
+                    <td className="break-words px-2 py-3 font-semibold text-slate-800">
                       {patient.name}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.age ?? "—"}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.condition}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.phone || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.doctor?.name || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3">
                       <button
                         onClick={() => startEdit(patient)}
                         className="mr-3 font-medium text-blue-600 hover:underline"

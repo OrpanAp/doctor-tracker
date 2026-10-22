@@ -1,4 +1,7 @@
+const mongoose = require("mongoose");
 const Doctor = require("../models/Doctor");
+const Patient = require("../models/Patient");
+const { escapeRegex, buildDateRange } = require("../utils/queryFilters");
 
 async function getDoctors(req, res, next) {
   try {
@@ -14,7 +17,7 @@ async function getDoctors(req, res, next) {
     if (search) {
       const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const regex = new RegExp(escaped, "i");
-      filter.$or = [{ name: regex }, { specialty: regex }, { email: regex }];
+      filter.$or = [{ name: regex }, { specialty: regex }, { email: regex }, { hospital: regex }, { phone: regex }];
     }
 
     if (["active", "inactive"].includes(req.query.status)) {
@@ -22,8 +25,16 @@ async function getDoctors(req, res, next) {
     }
 
     if (req.query.specialty) {
-      filter.specialty = req.query.specialty;
+      filter.specialty = { $regex: escapeRegex(String(req.query.specialty).trim()), $options: "i" };
     }
+
+    if (req.query.hospital) {
+      filter.hospital = { $regex: escapeRegex(String(req.query.hospital).trim()), $options: "i" };
+    }
+
+    const dateRange = buildDateRange(req.query.dateFrom, req.query.dateTo);
+    if (dateRange.error) return res.status(400).json({ success: false, message: dateRange.error });
+    if (dateRange.filter) filter.createdAt = dateRange.filter;
 
     const [doctors, total] = await Promise.all([
       Doctor.find(filter)
@@ -51,6 +62,7 @@ async function getDoctors(req, res, next) {
 
 async function getDoctor(req, res, next) {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     const doctor = await Doctor.findById(req.params.id);
     if (!doctor) {
       return res.status(404).json({
@@ -71,6 +83,7 @@ async function createDoctor(req, res, next) {
       specialty,
       email,
       phone,
+      hospital,
       department,
       experienceYears,
       status,
@@ -79,12 +92,13 @@ async function createDoctor(req, res, next) {
     if (
       !name?.trim() ||
       !specialty?.trim() ||
+      !hospital?.trim() ||
       !email?.trim() ||
       !phone?.trim()
     ) {
       return res.status(400).json({
         success: false,
-        message: "Name, specialty, email and phone are required",
+        message: "Name, specialty, hospital, email and phone are required",
       });
     }
 
@@ -93,6 +107,7 @@ async function createDoctor(req, res, next) {
       specialty,
       email,
       phone,
+      hospital,
       department,
       experienceYears,
       status,
@@ -112,11 +127,13 @@ async function createDoctor(req, res, next) {
 
 async function updateDoctor(req, res, next) {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     const allowed = [
       "name",
       "specialty",
       "email",
       "phone",
+      "hospital",
       "department",
       "experienceYears",
       "status",
@@ -160,6 +177,11 @@ async function updateDoctor(req, res, next) {
 
 async function deleteDoctor(req, res, next) {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
+    const assignedPatients = await Patient.countDocuments({ doctor: req.params.id });
+    if (assignedPatients > 0) {
+      return res.status(409).json({ success: false, message: `Cannot delete this doctor while ${assignedPatients} patient(s) are assigned. Reassign or delete those patients first.` });
+    }
     const doctor = await Doctor.findByIdAndDelete(req.params.id);
     if (!doctor) {
       return res.status(404).json({
