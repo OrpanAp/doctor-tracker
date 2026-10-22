@@ -73,7 +73,7 @@ function logout(req, res) {
   res.clearCookie("token", {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    sameSite: "lax",
     path: "/",
   });
 
