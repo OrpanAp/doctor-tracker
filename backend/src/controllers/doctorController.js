@@ -14,7 +14,13 @@ async function getDoctors(req, res, next) {
     if (search) {
       const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const regex = new RegExp(escaped, "i");
-      filter.$or = [{ name: regex }, { specialty: regex }, { email: regex }];
+      filter.$or = [
+        { name: regex },
+        { specialty: regex },
+        { email: regex },
+        { department: regex },
+        { hospital: regex },
+      ];
     }
 
     if (["active", "inactive"].includes(req.query.status)) {
@@ -23,6 +29,20 @@ async function getDoctors(req, res, next) {
 
     if (req.query.specialty) {
       filter.specialty = req.query.specialty;
+    }
+
+    // Filter by the date the doctor record was created.
+    if (req.query.dateFrom || req.query.dateTo) {
+      filter.createdAt = {};
+      if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) {
+        filter.createdAt.$gte = new Date(req.query.dateFrom);
+      }
+      if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) {
+        const dateTo = new Date(req.query.dateTo);
+        dateTo.setHours(23, 59, 59, 999);
+        filter.createdAt.$lte = dateTo;
+      }
+      if (Object.keys(filter.createdAt).length === 0) delete filter.createdAt;
     }
 
     const [doctors, total] = await Promise.all([
