@@ -13,6 +13,7 @@ const doctorSchema = new mongoose.Schema(
     },
     phone: { type: String, required: true, trim: true },
     department: { type: String, trim: true, default: "General" },
+    hospital: { type: String, trim: true, maxlength: 150, default: "" },
     experienceYears: { type: Number, min: 0, default: 0 },
     status: {
       type: String,
