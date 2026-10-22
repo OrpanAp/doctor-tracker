@@ -134,19 +134,19 @@ export default function DoctorsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 md:flex">
-      <aside className="bg-slate-950 p-6 text-white md:min-h-screen md:w-64">
+    <div className="min-h-screen bg-slate-50 min-[1171px]:flex">
+      <aside className="bg-slate-950 p-6 text-white min-[1171px]:min-h-screen min-[1171px]:w-64">
         <Link href="/dashboard" className="mb-8 block text-xl font-bold">
           ✚ Doctor Tracker
         </Link>
-        <nav className="flex flex-wrap gap-2 md:flex-col">
+        <nav className="flex flex-wrap gap-2 min-[1171px]:flex-col">
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/dashboard">▦ Dashboard</Link>
           <Link className="rounded-lg bg-blue-600 px-4 py-3" href="/doctors">⚕ Doctors</Link>
           <Link className="rounded-lg px-4 py-3 hover:bg-slate-800" href="/patients">♙ Patients</Link>
         </nav>
       </aside>
 
-      <main className="min-w-0 flex-1 p-5 md:p-9">
+      <main className="min-w-0 flex-1 p-5 min-[1171px]:p-9">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm text-slate-500">Directory</p>
@@ -221,7 +221,7 @@ export default function DoctorsPage() {
             />
           </div>
 
-          <div className="grid gap-3 p-3 sm:grid-cols-2 md:hidden">
+          <div className="grid gap-3 p-3 sm:grid-cols-2 min-[1171px]:hidden">
             {doctors.map((doctor) => (
               <article key={doctor._id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
@@ -247,7 +247,7 @@ export default function DoctorsPage() {
             {!loading && doctors.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No doctors found.</p>}
           </div>
 
-          <div className="hidden overflow-x-auto md:block">
+          <div className="hidden overflow-x-auto min-[1171px]:block">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
