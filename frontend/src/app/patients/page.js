@@ -80,10 +80,13 @@ export default function PatientsPage() {
 
   useEffect(() => {
     const selectedDoctor = new URLSearchParams(window.location.search).get("doctor");
+    // The query parameter initializes the directory filter after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (selectedDoctor) setDoctorFilter(selectedDoctor);
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDoctors();
   }, [loadDoctors]);
 
