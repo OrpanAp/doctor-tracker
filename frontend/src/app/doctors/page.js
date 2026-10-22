@@ -34,9 +34,25 @@ export default function DoctorsPage() {
       const result = await api(
         `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}`
       );
-      const payload = result.data ?? result;
-      setDoctors(Array.isArray(payload) ? payload : payload.doctors ?? []);
-      setPages(payload.totalPages ?? payload.pages ?? 1);
+      // The API returns records in result.data and pagination metadata separately.
+      const records = Array.isArray(result.data)
+        ? result.data
+        : Array.isArray(result.data?.doctors)
+          ? result.data.doctors
+          : Array.isArray(result.doctors)
+            ? result.doctors
+            : [];
+      const totalPages =
+        result.pagination?.totalPages ??
+        result.data?.pagination?.totalPages ??
+        result.totalPages ??
+        1;
+
+      setDoctors(records);
+      setPages(Math.max(1, totalPages));
+      if (page > Math.max(1, totalPages)) {
+        setPage(Math.max(1, totalPages));
+      }
     } catch (err) {
       setError(err.message);
     } finally {
