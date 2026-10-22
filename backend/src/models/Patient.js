@@ -6,7 +6,6 @@ const patientSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Doctor",
       required: true,
-      index: true,
     },
     name: {
       type: String,
