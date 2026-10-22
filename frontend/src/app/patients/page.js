@@ -349,23 +349,23 @@ export default function PatientsPage() {
             </table>
           </div>
 
-          <div className="flex items-center justify-between border-t border-slate-200 p-4">
-            <span className="text-sm text-slate-500">Page {page} of {pages}</span>
-            <div className="flex gap-2">
+          <div className="flex flex-col gap-3 border-t border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold text-slate-800" aria-live="polite">
+              Page {page} of {pages}
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
               <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40"
-              >
-                Previous
-              </button>
+                type="button"
+                disabled={page <= 1 || loading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-400 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
+              >Previous</button>
               <button
-                disabled={page >= pages}
-                onClick={() => setPage((p) => p + 1)}
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-40"
-              >
-                Next
-              </button>
+                type="button"
+                disabled={page >= pages || loading}
+                onClick={() => setPage((p) => Math.min(pages, p + 1))}
+                className="inline-flex min-h-10 items-center justify-center rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 disabled:shadow-none"
+              >Next</button>
             </div>
           </div>
         </section>
