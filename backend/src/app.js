@@ -38,11 +38,18 @@ app.use("/api/dashboard", dashboardRoutes);
 
 // Central error handler — keep this last
 app.use((err, req, res, next) => {
+  if (res.headersSent) return next(err);
   console.error(err.message);
 
-  res.status(500).json({
+  if (err.name === "ValidationError" || err.name === "CastError") {
+    return res.status(400).json({ success: false, message: "Invalid request data", details: err.message });
+  }
+  if (err.code === 11000) {
+    return res.status(409).json({ success: false, message: "A record with this value already exists" });
+  }
+  res.status(err.statusCode || 500).json({
     success: false,
-    message: "Internal server error",
+    message: err.statusCode && err.statusCode < 500 ? err.message : "Internal server error",
   });
 });
 
