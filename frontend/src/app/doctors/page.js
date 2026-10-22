@@ -139,7 +139,7 @@ export default function DoctorsPage() {
       setNotice(result.message || "Doctor saved successfully.");
       await loadDoctors();
     } catch (err) {
-      setError(err.message);
+      handleRequestError(err);
     }
   }
 
