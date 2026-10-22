@@ -89,7 +89,7 @@ export default function PatientsPage() {
 
   function startCreate() {
     setEditingId(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, doctor: doctorFilter });
     setError("");
     setNotice("");
     setShowForm(true);
