@@ -46,9 +46,10 @@ async function getDashboard(req, res, next) {
       ]),
     ]);
 
-    const doctorIds = patientsByDoctor.map((item) => item._id).filter(Boolean);
-    const doctors = await Doctor.find({ _id: { $in: doctorIds } }).select("name").lean();
-    const doctorNames = new Map(doctors.map((doctor) => [doctor._id.toString(), doctor.name]));
+    const doctors = await Doctor.find().select("name").lean();
+    const patientCountByDoctor = new Map(
+      patientsByDoctor.filter((item) => item._id).map((item) => [item._id.toString(), item.count]),
+    );
 
     function fillMonthlySeries(aggregateRows) {
       const rowsByMonth = new Map(
@@ -79,10 +80,12 @@ async function getDashboard(req, res, next) {
           condition: item._id || "Unspecified",
           count: item.count,
         })),
-        patientsByDoctor: patientsByDoctor.map((item) => ({
-          doctor: doctorNames.get(item._id?.toString()) || "Unknown",
-          count: item.count,
-        })),
+        patientsByDoctor: doctors
+          .map((doctor) => ({
+            doctor: doctor.name,
+            count: patientCountByDoctor.get(doctor._id.toString()) || 0,
+          }))
+          .sort((a, b) => b.count - a.count),
         monthlyPatientRegistrations: fillMonthlySeries(monthlyPatientRegistrations),
         monthlyDoctorRegistrations: fillMonthlySeries(monthlyDoctorRegistrations),
       },
