@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 const emptyForm = {
   name: "",
   specialty: "",
+  hospital: "",
   email: "",
   phone: "",
   department: "",
@@ -17,6 +18,11 @@ const emptyForm = {
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [specialtyFilter, setSpecialtyFilter] = useState("");
+  const [hospitalFilter, setHospitalFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [form, setForm] = useState(emptyForm);
@@ -32,7 +38,7 @@ export default function DoctorsPage() {
 
     try {
       const result = await api(
-        `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}`
+        `/doctors?page=${page}&limit=10&search=${encodeURIComponent(search)}&status=${encodeURIComponent(statusFilter)}&specialty=${encodeURIComponent(specialtyFilter)}&hospital=${encodeURIComponent(hospitalFilter)}&dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}`
       );
       // The API returns records in result.data and pagination metadata separately.
       const records = Array.isArray(result.data)
@@ -58,7 +64,7 @@ export default function DoctorsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, statusFilter, specialtyFilter, hospitalFilter, dateFrom, dateTo]);
 
   useEffect(() => {
     const timer = setTimeout(loadDoctors, 250);
@@ -78,6 +84,7 @@ export default function DoctorsPage() {
     setForm({
       name: doctor.name ?? "",
       specialty: doctor.specialty ?? "",
+      hospital: doctor.hospital ?? "",
       email: doctor.email ?? "",
       phone: doctor.phone ?? "",
       department: doctor.department ?? "",
@@ -168,6 +175,7 @@ export default function DoctorsPage() {
               {[
                 ["name", "Full name", "text"],
                 ["specialty", "Specialty", "text"],
+                ["hospital", "Hospital", "text"],
                 ["email", "Email", "email"],
                 ["phone", "Phone", "tel"],
                 ["department", "Department", "text"],
@@ -216,7 +224,7 @@ export default function DoctorsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Search name, specialty, or email..."
+              placeholder="Search name, specialty, hospital, email, or phone..."
               className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
