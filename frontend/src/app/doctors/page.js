@@ -221,7 +221,33 @@ export default function DoctorsPage() {
             />
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="grid gap-3 p-3 sm:grid-cols-2 md:hidden">
+            {doctors.map((doctor) => (
+              <article key={doctor._id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="break-words font-semibold text-slate-900">{doctor.name}</h2>
+                    <p className="mt-1 break-all text-sm text-slate-500">{doctor.email}</p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
+                    {doctor.status || "inactive"}
+                  </span>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Specialty</dt><dd className="mt-1 break-words text-slate-800">{doctor.specialty || "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Department</dt><dd className="mt-1 break-words text-slate-800">{doctor.department || "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Experience</dt><dd className="mt-1 text-slate-800">{doctor.experienceYears ?? 0} years</dd></div>
+                </dl>
+                <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-3">
+                  <button type="button" onClick={() => startEdit(doctor)} className="min-h-10 font-semibold text-blue-700">Edit</button>
+                  <button type="button" onClick={() => deleteDoctor(doctor)} className="min-h-10 font-semibold text-red-700">Delete</button>
+                </div>
+              </article>
+            ))}
+            {!loading && doctors.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No doctors found.</p>}
+          </div>
+
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
