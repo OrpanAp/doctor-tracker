@@ -10,6 +10,7 @@ const emptyForm = {
   email: "",
   phone: "",
   department: "",
+  hospital: "",
   experienceYears: 0,
   status: "active",
 };
@@ -81,6 +82,7 @@ export default function DoctorsPage() {
       email: doctor.email ?? "",
       phone: doctor.phone ?? "",
       department: doctor.department ?? "",
+      hospital: doctor.hospital ?? "",
       experienceYears: doctor.experienceYears ?? 0,
       status: doctor.status ?? "active",
     });
@@ -171,6 +173,7 @@ export default function DoctorsPage() {
                 ["email", "Email", "email"],
                 ["phone", "Phone", "tel"],
                 ["department", "Department", "text"],
+                ["hospital", "Hospital / Clinic", "text"],
                 ["experienceYears", "Years of experience", "number"],
               ].map(([key, label, type]) => (
                 <label key={key} className="text-sm font-medium text-slate-700">
@@ -225,7 +228,7 @@ export default function DoctorsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  {["Doctor", "Specialty", "Department", "Experience", "Status", "Actions"].map((heading) => (
+                  {["Doctor", "Specialty", "Department", "Hospital", "Experience", "Status", "Actions"].map((heading) => (
                     <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">{heading}</th>
                   ))}
                 </tr>
@@ -239,6 +242,7 @@ export default function DoctorsPage() {
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.specialty}</td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.department || "—"}</td>
+                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.hospital || "—"}</td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.experienceYears ?? 0} years</td>
                     <td className="whitespace-nowrap px-5 py-4">
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
@@ -252,7 +256,7 @@ export default function DoctorsPage() {
                   </tr>
                 ))}
                 {!loading && doctors.length === 0 && (
-                  <tr><td colSpan="6" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
+                  <tr><td colSpan="7" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
                 )}
               </tbody>
             </table>
