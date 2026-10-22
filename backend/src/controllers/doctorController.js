@@ -25,7 +25,7 @@ async function getDoctors(req, res, next) {
     }
 
     if (req.query.specialty) {
-      filter.specialty = String(req.query.specialty).trim();
+      filter.specialty = { $regex: escapeRegex(String(req.query.specialty).trim()), $options: "i" };
     }
 
     if (req.query.hospital) {
