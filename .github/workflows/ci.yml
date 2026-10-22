@@ -48,8 +48,6 @@ jobs:
     if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'fix/complete-specification'))
     needs: [backend, frontend]
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     env:
       TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
     steps:
@@ -81,16 +79,3 @@ jobs:
           done
           curl --silent --fail http://127.0.0.1:3000/login > /dev/null
           npm run capture:screenshots
-      - name: Commit generated screenshots to the pull request branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add screenshots/*.png
-          if git diff --cached --quiet; then
-            echo "Screenshots are already up to date."
-          else
-            git commit -m "docs: update desktop and mobile UI screenshots"
-            git fetch origin "$TARGET_BRANCH"
-            git rebase "origin/$TARGET_BRANCH"
-            git push origin "HEAD:$TARGET_BRANCH"
-          fi
