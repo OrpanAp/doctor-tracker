@@ -267,6 +267,7 @@ export default function DoctorsPage() {
                   <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Experience</dt><dd className="mt-1 text-slate-800">{doctor.experienceYears ?? 0} years</dd></div>
                 </dl>
                 <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-3">
+                  <Link href={"/patients?doctor=" + doctor._id} className="min-h-10 font-semibold text-emerald-700">Patients</Link>
                   <button type="button" onClick={() => startEdit(doctor)} className="min-h-10 font-semibold text-blue-700">Edit</button>
                   <button type="button" onClick={() => deleteDoctor(doctor)} className="min-h-10 font-semibold text-red-700">Delete</button>
                 </div>
@@ -279,7 +280,7 @@ export default function DoctorsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  {["Doctor", "Specialty", "Department", "Experience", "Status", "Actions"].map((heading) => (
+                  {["Doctor", "Specialty", "Hospital", "Department", "Experience", "Status", "Actions"].map((heading) => (
                     <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">{heading}</th>
                   ))}
                 </tr>
@@ -292,6 +293,7 @@ export default function DoctorsPage() {
                       <p className="mt-1 text-xs text-slate-500">{doctor.email}</p>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.specialty}</td>
+                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.hospital || "—"}</td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.department || "—"}</td>
                     <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.experienceYears ?? 0} years</td>
                     <td className="whitespace-nowrap px-5 py-4">
@@ -300,13 +302,14 @@ export default function DoctorsPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4">
+                      <Link href={"/patients?doctor=" + doctor._id} className="mr-3 font-medium text-emerald-700 hover:underline">Patients</Link>
                       <button onClick={() => startEdit(doctor)} className="mr-3 font-medium text-blue-600 hover:underline">Edit</button>
                       <button onClick={() => deleteDoctor(doctor)} className="font-medium text-red-600 hover:underline">Delete</button>
                     </td>
                   </tr>
                 ))}
                 {!loading && doctors.length === 0 && (
-                  <tr><td colSpan="6" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
+                  <tr><td colSpan="7" className="px-5 py-12 text-center text-slate-500">No doctors found.</td></tr>
                 )}
               </tbody>
             </table>
