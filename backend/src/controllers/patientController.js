@@ -21,10 +21,7 @@ async function getPatients(req, res, next) {
 
     if (req.query.condition) {
       filter.condition = {
-        $regex: String(req.query.condition).replace(
-          /[.*+?^${}()|[\]\\]/g,
-          "\\$&",
-        ),
+        $regex: escapeRegex(req.query.condition),
         $options: "i",
       };
     }
@@ -34,9 +31,7 @@ async function getPatients(req, res, next) {
     if (dateRange.filter) filter.createdAt = dateRange.filter;
 
     if (req.query.search) {
-      const search = String(req.query.search)
-        .trim()
-        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const search = escapeRegex(String(req.query.search).trim());
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
         { condition: { $regex: search, $options: "i" } },
