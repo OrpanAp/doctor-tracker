@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
@@ -16,6 +17,7 @@ const emptyForm = {
 };
 
 export default function DoctorsPage() {
+  const router = useRouter();
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -32,6 +34,14 @@ export default function DoctorsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+
+  function handleRequestError(err) {
+    if (/unauthori[sz]ed|not authorized|authentication|token|login|session/i.test(err.message || "")) {
+      router.replace("/login");
+      return;
+    }
+    setError(err.message || "Something went wrong. Please try again.");
+  }
 
   const loadDoctors = useCallback(async () => {
     setLoading(true);
@@ -70,11 +80,11 @@ export default function DoctorsPage() {
         setPage(Math.max(1, totalPages));
       }
     } catch (err) {
-      setError(err.message);
+      handleRequestError(err);
     } finally {
       setLoading(false);
     }
-  }, [page, limit, search, statusFilter, specialtyFilter, dateFrom, dateTo]);
+  }, [page, limit, search, statusFilter, specialtyFilter, dateFrom, dateTo, router]);
 
   useEffect(() => {
     const timer = setTimeout(loadDoctors, 250);
