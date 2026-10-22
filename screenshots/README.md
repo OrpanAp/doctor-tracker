@@ -1,11 +1,12 @@
 # Screenshot evidence
 
-The project submission requires genuine screenshots from the running application. Capture screenshots with fictional data at desktop width (at least 1171px) and compact/mobile width (1170px or below), then add them to this folder and link them from the root README.
+The CI workflow captures the actual production-built Next.js UI with fictional demo data and commits the images to this directory after the backend tests, frontend build, and lint checks pass.
 
-Required files:
-- dashboard-desktop.png
-- dashboard-mobile.png
-- doctors-mobile.png
-- patients-mobile.png
+- `dashboard-desktop.png` — 1440px wide
+- `dashboard-mobile.png` — 390px wide
+- `doctors-mobile.png` — 390px wide
+- `patients-mobile.png` — 390px wide
+- `doctors-1170px.png` — compact layout boundary
+- `doctors-1171px.png` — desktop layout boundary
 
-Do not use real patient information or include credentials, cookies, or other secrets.
+The screenshots use synthetic records and mocked API responses. They are visual evidence of the UI, not evidence of production database contents or live API functionality.
