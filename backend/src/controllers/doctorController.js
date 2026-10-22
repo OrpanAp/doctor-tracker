@@ -1,5 +1,6 @@
 const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
+const { escapeRegex, buildDateRange } = require("../utils/queryFilters");
 
 async function getDoctors(req, res, next) {
   try {
@@ -27,19 +28,12 @@ async function getDoctors(req, res, next) {
     }
 
     if (req.query.hospital) {
-      filter.hospital = { $regex: String(req.query.hospital).trim(), $options: "i" };
+      filter.hospital = { $regex: escapeRegex(String(req.query.hospital).trim()), $options: "i" };
     }
 
-    const dateFilter = {};
-    if (req.query.dateFrom && !Number.isNaN(Date.parse(req.query.dateFrom))) {
-      dateFilter.$gte = new Date(req.query.dateFrom);
-    }
-    if (req.query.dateTo && !Number.isNaN(Date.parse(req.query.dateTo))) {
-      const end = new Date(req.query.dateTo);
-      end.setHours(23, 59, 59, 999);
-      dateFilter.$lte = end;
-    }
-    if (Object.keys(dateFilter).length) filter.createdAt = dateFilter;
+    const dateRange = buildDateRange(req.query.dateFrom, req.query.dateTo);
+    if (dateRange.error) return res.status(400).json({ success: false, message: dateRange.error });
+    if (dateRange.filter) filter.createdAt = dateRange.filter;
 
     const [doctors, total] = await Promise.all([
       Doctor.find(filter)
