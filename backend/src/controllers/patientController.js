@@ -157,6 +157,9 @@ async function updatePatient(req, res, next) {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
     }
 
+    if (Object.keys(updates).length === 0) return res.status(400).json({ success: false, message: "Provide at least one field to update" });
+
+    if (updates.doctor && !mongoose.isValidObjectId(updates.doctor)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     if (updates.doctor && !(await Doctor.exists({ _id: updates.doctor }))) {
       return res
         .status(400)
