@@ -276,32 +276,32 @@ export default function DoctorsPage() {
             {!loading && doctors.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No doctors found.</p>}
           </div>
 
-          <div className="hidden overflow-x-auto min-[1171px]:block">
-            <table className="w-full text-left text-sm">
+          <div className="hidden min-[1171px]:block">
+            <table className="w-full table-fixed text-left text-xs min-[1400px]:text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
                   {["Doctor", "Specialty", "Hospital", "Department", "Experience", "Status", "Actions"].map((heading) => (
-                    <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">{heading}</th>
+                    <th key={heading} className="break-words px-2 py-3 font-medium">{heading}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {doctors.map((doctor) => (
                   <tr key={doctor._id} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3">
                       <p className="font-semibold text-slate-800">{doctor.name}</p>
                       <p className="mt-1 text-xs text-slate-500">{doctor.email}</p>
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.specialty}</td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.hospital || "—"}</td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.department || "—"}</td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{doctor.experienceYears ?? 0} years</td>
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.specialty}</td>
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.hospital || "—"}</td>
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.department || "—"}</td>
+                    <td className="break-words px-2 py-3 text-slate-600">{doctor.experienceYears ?? 0} years</td>
+                    <td className="break-words px-2 py-3">
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${doctor.status === "active" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
                         {doctor.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3">
                       <Link href={"/patients?doctor=" + doctor._id} className="mr-3 font-medium text-emerald-700 hover:underline">Patients</Link>
                       <button onClick={() => startEdit(doctor)} className="mr-3 font-medium text-blue-600 hover:underline">Edit</button>
                       <button onClick={() => deleteDoctor(doctor)} className="font-medium text-red-600 hover:underline">Delete</button>
