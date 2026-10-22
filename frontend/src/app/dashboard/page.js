@@ -92,7 +92,7 @@ export default function DashboardPage() {
         <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
           <h3 className="text-lg font-bold text-slate-900">Registration trends</h3>
           <p className="mt-1 text-sm text-slate-500">New doctors and patients registered over the last six months.</p>
-          <div className="mt-5 grid grid-cols-6 gap-2 min-[1171px]:gap-4">
+          <div className="mt-5 grid grid-cols-3 gap-3 min-[1171px]:grid-cols-6 min-[1171px]:gap-4">
             {(data?.monthlyPatientRegistrations || []).map((item, index) => {
               const doctorCount = data?.monthlyDoctorRegistrations?.[index]?.count || 0;
               const max = Math.max(1, ...(data?.monthlyPatientRegistrations || []).map((x) => x.count), ...(data?.monthlyDoctorRegistrations || []).map((x) => x.count));
