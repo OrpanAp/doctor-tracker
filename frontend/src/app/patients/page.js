@@ -343,12 +343,12 @@ export default function PatientsPage() {
             {!loading && patients.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No patients found.</p>}
           </div>
 
-          <div className="hidden overflow-x-auto min-[1171px]:block">
-            <table className="w-full text-left text-sm">
+          <div className="hidden min-[1171px]:block">
+            <table className="w-full table-fixed text-left text-xs min-[1400px]:text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
                   {["Patient", "Age", "Condition", "Phone", "Assigned doctor", "Actions"].map((heading) => (
-                    <th key={heading} className="whitespace-nowrap px-5 py-4 font-medium">
+                    <th key={heading} className="break-words px-2 py-3 font-medium">
                       {heading}
                     </th>
                   ))}
@@ -357,22 +357,22 @@ export default function PatientsPage() {
               <tbody>
                 {patients.map((patient) => (
                   <tr key={patient._id} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-800">
+                    <td className="break-words px-2 py-3 font-semibold text-slate-800">
                       {patient.name}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.age ?? "—"}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.condition}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.phone || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
+                    <td className="break-words px-2 py-3 text-slate-600">
                       {patient.doctor?.name || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <td className="break-words px-2 py-3">
                       <button
                         onClick={() => startEdit(patient)}
                         className="mr-3 font-medium text-blue-600 hover:underline"
