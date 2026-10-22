@@ -82,7 +82,11 @@ try {
     const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
     await mockApi(page);
     await page.goto(baseURL + "/doctors", { waitUntil: "networkidle" });
-    await page.getByRole("heading", { name: "Dr. Sarah Ahmed" }).waitFor();
+    if (width <= 1170) {
+      await page.getByRole("heading", { name: "Dr. Sarah Ahmed" }).waitFor();
+    } else {
+      await page.locator("tbody").getByText("Dr. Sarah Ahmed").waitFor();
+    }
     await page.screenshot({ path: path.join(outputDir, `doctors-${width}px.png`), fullPage: true });
     await page.close();
   }
