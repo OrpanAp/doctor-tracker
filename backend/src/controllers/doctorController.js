@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 const { escapeRegex, buildDateRange } = require("../utils/queryFilters");
@@ -61,6 +62,7 @@ async function getDoctors(req, res, next) {
 
 async function getDoctor(req, res, next) {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     const doctor = await Doctor.findById(req.params.id);
     if (!doctor) {
       return res.status(404).json({
@@ -125,6 +127,7 @@ async function createDoctor(req, res, next) {
 
 async function updateDoctor(req, res, next) {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     const allowed = [
       "name",
       "specialty",
@@ -174,6 +177,7 @@ async function updateDoctor(req, res, next) {
 
 async function deleteDoctor(req, res, next) {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ success: false, message: "Invalid doctor ID" });
     const assignedPatients = await Patient.countDocuments({ doctor: req.params.id });
     if (assignedPatients > 0) {
       return res.status(409).json({ success: false, message: `Cannot delete this doctor while ${assignedPatients} patient(s) are assigned. Reassign or delete those patients first.` });
