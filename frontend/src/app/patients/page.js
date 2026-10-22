@@ -90,6 +90,14 @@ export default function PatientsPage() {
     loadDoctors();
   }, [loadDoctors]);
 
+  useEffect(() => {
+    const assignedDoctor = new URLSearchParams(window.location.search).get("doctor");
+    if (assignedDoctor) {
+      setDoctorFilter(assignedDoctor);
+      setPage(1);
+    }
+  }, []);
+
   function startCreate() {
     setEditingId(null);
     setForm(emptyForm);
