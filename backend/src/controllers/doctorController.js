@@ -1,4 +1,5 @@
-const Doctor = require("../models/Doctor");\nconst Patient = require("../models/Patient");
+const Doctor = require("../models/Doctor");
+const Patient = require("../models/Patient");
 
 async function getDoctors(req, res, next) {
   try {
@@ -160,7 +161,11 @@ async function updateDoctor(req, res, next) {
 
 async function deleteDoctor(req, res, next) {
   try {
-    const assignedPatients = await Patient.countDocuments({ doctor: req.params.id });\n    if (assignedPatients > 0) {\n      return res.status(409).json({ success: false, message: `Cannot delete this doctor while ${assignedPatients} patient(s) are assigned. Reassign or delete those patients first.` });\n    }\n    const doctor = await Doctor.findByIdAndDelete(req.params.id);
+    const assignedPatients = await Patient.countDocuments({ doctor: req.params.id });
+    if (assignedPatients > 0) {
+      return res.status(409).json({ success: false, message: `Cannot delete this doctor while ${assignedPatients} patient(s) are assigned. Reassign or delete those patients first.` });
+    }
+    const doctor = await Doctor.findByIdAndDelete(req.params.id);
     if (!doctor) {
       return res.status(404).json({
         success: false,
