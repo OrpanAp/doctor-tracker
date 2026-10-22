@@ -292,7 +292,28 @@ export default function PatientsPage() {
             />
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="grid gap-3 p-3 sm:grid-cols-2 md:hidden">
+            {patients.map((patient) => (
+              <article key={patient._id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="min-w-0">
+                  <h2 className="break-words font-semibold text-slate-900">{patient.name}</h2>
+                  <p className="mt-1 break-words text-sm text-slate-500">{patient.condition || "No condition specified"}</p>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 text-sm">
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Age</dt><dd className="mt-1 text-slate-800">{patient.age ?? "—"}</dd></div>
+                  <div className="min-w-0"><dt className="text-xs font-medium text-slate-500">Phone</dt><dd className="mt-1 break-all text-slate-800">{patient.phone || "—"}</dd></div>
+                  <div className="col-span-2 min-w-0"><dt className="text-xs font-medium text-slate-500">Assigned doctor</dt><dd className="mt-1 break-words text-slate-800">{patient.doctor?.name || "—"}</dd></div>
+                </dl>
+                <div className="mt-4 flex flex-wrap gap-4 border-t border-slate-100 pt-3">
+                  <button type="button" onClick={() => startEdit(patient)} className="min-h-10 font-semibold text-blue-700">Edit</button>
+                  <button type="button" onClick={() => deletePatient(patient)} className="min-h-10 font-semibold text-red-700">Delete</button>
+                </div>
+              </article>
+            ))}
+            {!loading && patients.length === 0 && <p className="col-span-full px-3 py-8 text-center text-sm text-slate-500">No patients found.</p>}
+          </div>
+
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
