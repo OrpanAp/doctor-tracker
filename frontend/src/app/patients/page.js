@@ -191,7 +191,7 @@ export default function PatientsPage() {
               {editingId ? "Edit patient" : "Add a patient"}
             </h2>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 min-[1171px]:grid-cols-2 min-[1171px]:grid-cols-3">
               <label className="text-sm font-medium text-slate-700">
                 Full name
                 <input
@@ -238,7 +238,7 @@ export default function PatientsPage() {
                 />
               </label>
 
-              <label className="text-sm font-medium text-slate-700 sm:col-span-2">
+              <label className="text-sm font-medium text-slate-700 min-[1171px]:col-span-2">
                 Assigned doctor
                 <select
                   required
@@ -288,11 +288,11 @@ export default function PatientsPage() {
                 setPage(1);
               }}
               placeholder="Search patient, condition, or phone..."
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 sm:max-w-md"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 min-[1171px]:max-w-md"
             />
           </div>
 
-          <div className="grid gap-3 p-3 sm:grid-cols-2 min-[1171px]:hidden">
+          <div className="grid gap-3 p-3 min-[1171px]:grid-cols-2 min-[1171px]:hidden">
             {patients.map((patient) => (
               <article key={patient._id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="min-w-0">
@@ -370,7 +370,7 @@ export default function PatientsPage() {
             </table>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-t border-slate-200 bg-slate-50 p-4 min-[1171px]:flex-row min-[1171px]:items-center min-[1171px]:justify-between">
             <p className="text-sm font-semibold text-slate-800" aria-live="polite">
               Page {page} of {pages}
             </p>
