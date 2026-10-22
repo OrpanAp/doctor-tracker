@@ -12,6 +12,7 @@ const patientSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: 100,
     },
     age: {
       type: Number,
@@ -23,11 +24,13 @@ const patientSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: 150,
     },
     phone: {
       type: String,
       required: true,
       trim: true,
+      maxlength: 30,
     },
   },
   { timestamps: true },
