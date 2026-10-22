@@ -264,6 +264,7 @@ export default function PatientsPage() {
               <label className="text-sm font-medium text-slate-700">
                 Phone
                 <input
+                  required
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5"
