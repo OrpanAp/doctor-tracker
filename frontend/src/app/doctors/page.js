@@ -205,7 +205,7 @@ export default function DoctorsPage() {
                   {label}
                   <input
                     type={type}
-                    required={key !== "phone" && key !== "department"}
+                    required={key !== "department" && key !== "hospital"}
                     min={type === "number" ? "0" : undefined}
                     value={form[key]}
                     onChange={(e) => setForm({ ...form, [key]: e.target.value })}
