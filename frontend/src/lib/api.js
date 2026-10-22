@@ -22,7 +22,7 @@ export async function api(path, options = {}) {
       typeof window !== "undefined" &&
       window.location.pathname !== "/login"
     ) {
-      window.location.assign("/login");
+      window.location.assign(new URL("/login", window.location.origin).toString());
     }
     throw new Error(result.message || result.error || "Request failed");
   }
