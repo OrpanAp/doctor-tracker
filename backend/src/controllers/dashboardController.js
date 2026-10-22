@@ -33,7 +33,6 @@ async function getDashboard(req, res, next) {
       Patient.aggregate([
         { $group: { _id: "$doctor", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
-        { $limit: 5 },
       ]),
       Patient.aggregate([
         { $match: { createdAt: { $gte: sixMonthsAgo } } },
